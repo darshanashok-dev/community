@@ -9,7 +9,7 @@ source .venv/bin/activate
 pytest -v
 ```
 
-Test modules (`86` automated tests total):
+Test modules (`87` automated tests total):
 - `tests/test_phase1_app.py`: App startup, all 7 pages, navigation, `/health`, 404, security headers, zero external CDNs, static assets.
 - `tests/test_phase2_message_analyser.py`: Digital-arrest scams, KYC phishing, ambiguous medium risk, benign bank/UPI/delivery messages, isolated `"OTP"`/`"urgent"` guardrails, adversarial phrasing, validation, and no-log privacy.
 - `tests/test_phase3_url_analyser.py`: IP/hex/octal hosts, subdomains, look-alikes, punycode, shorteners, privacy reduction, mocked Safe Browsing v5 protobuf/JSON responses, mocked RDAP, error/timeout/429 handling, and consent enforcement.
@@ -45,5 +45,8 @@ Test modules (`86` automated tests total):
 
 ## 3. Voluntary Usability Evaluation (`evaluation/USABILITY_STUDY_PROTOCOL.md`)
 
-- Prepared protocol for **20–30 voluntary participants** using informed consent, 5 fictional scenario tasks, anonymous participant codes (`P01`–`P30`), and [evaluation/usability_questionnaire_template.csv](evaluation/usability_questionnaire_template.csv).
+- Prepared protocol for **20–30 voluntary participants** using informed consent, 5 fictional scenario tasks, anonymous participant codes (`P01`–`P30`), [evaluation/usability_questionnaire_template.csv](evaluation/usability_questionnaire_template.csv), and aggregation script [evaluation/analyze_usability.py](evaluation/analyze_usability.py):
+  ```bash
+  python evaluation/analyze_usability.py --input evaluation/completed_usability.csv --output-json evaluation/usability_summary.json
+  ```
 - **Honest status:** Human participant sessions have not been conducted yet; no participant feedback has been fabricated.

@@ -9,6 +9,7 @@ from app import create_app
 from app.services.message_analyser import analyze_message
 from app.services.url_analyser import analyze_url_locally, extract_registrable_domain
 from config import TestingConfig
+from evaluation.analyze_usability import UsabilityValidationError, summarize_usability_csv
 from evaluation.dataset_validator import DatasetValidationError, validate_dataset_rows
 from evaluation.evaluate_detection import evaluate_csv
 
@@ -134,3 +135,25 @@ def test_ui_polish_user_facing_labels_and_score_breakdown(client):
     assert "Indicator Points" in msg_html
     assert "Context Combinations" in msg_html
     assert "Benign Context Offset" in msg_html
+
+
+def test_usability_summary_blocks_template_and_computes_means(tmp_path):
+    template_csv = PROJECT_ROOT / "evaluation" / "usability_questionnaire_template.csv"
+    with pytest.raises(UsabilityValidationError):
+        summarize_usability_csv(template_csv)
+
+    sample_csv = tmp_path / "usability_test.csv"
+    sample_csv.write_text(
+        "participant_code,consent_confirmed,age_bracket,digital_comfort_1_to_5,"
+        "task1_clarity_1_to_5,task2_benign_confidence_1_to_5,task3_url_clarity_1_to_5,"
+        "task4_checklist_clarity_1_to_5,task5_android_quiz_clarity_1_to_5,"
+        "understands_advisory_disclaimer,overall_ease_1_to_5,anonymous_observations\n"
+        "P01,yes,18-29,4,5,4,5,5,4,yes,5,Clear score cards\n"
+        "P02,yes,50+,2,4,4,4,5,4,yes,4,Helpful after-scam steps\n",
+        encoding="utf-8",
+    )
+    summary = summarize_usability_csv(sample_csv)
+    assert summary["participant_count"] == 2
+    assert summary["meets_target_sample_size"] is False
+    assert summary["mean_likert_scores_1_to_5"]["task1_clarity_1_to_5"] == 4.5
+    assert summary["observation_count"] == 2

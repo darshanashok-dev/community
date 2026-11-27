@@ -7,8 +7,12 @@ before genuine held-out evaluation can run.
 
 from __future__ import annotations
 
+import argparse
+import csv
 import re
+import sys
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 REQUIRED_COLUMNS = (
@@ -197,3 +201,38 @@ def validate_dataset_rows(
         class_counts=class_counts,
         origins=origins,
     )
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Validate dataset provenance, redaction, annotations, and sample thresholds."
+    )
+    parser.add_argument("--input", required=True, type=Path, help="Path to labelled CSV file.")
+    parser.add_argument(
+        "--mode",
+        choices=["genuine-eval", "synthetic-smoke"],
+        default="genuine-eval",
+        help="Validation mode (default: genuine-eval).",
+    )
+    args = parser.parse_args()
+
+    with args.input.open("r", encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle)
+        fieldnames = list(reader.fieldnames or [])
+        rows = list(reader)
+
+    try:
+        summary = validate_dataset_rows(rows, fieldnames=fieldnames, mode=args.mode)
+    except DatasetValidationError as exc:
+        print(f"VALIDATION FAILED:\n{exc}", file=sys.stderr)
+        sys.exit(2)
+
+    print(
+        f"VALIDATION PASSED ({summary.mode}): total={summary.total_rows}, "
+        f"genuine={summary.genuine_rows}, benign_transactional={summary.benign_transactional_rows}, "
+        f"classes={summary.class_counts}"
+    )
+
+
+if __name__ == "__main__":
+    main()

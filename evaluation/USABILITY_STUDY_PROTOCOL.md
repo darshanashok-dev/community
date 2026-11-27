@@ -32,3 +32,9 @@ Collect anonymous responses in [usability_questionnaire_template.csv](usability_
 - Calmness and non-blaming tone of After-Scam page (1–5 Likert)
 - Understanding of "advisory only / not proof of safety" notices (Yes/No/Partial)
 - Task completion & qualitative usability observations.
+
+Once 20–30 real consent-confirmed responses are recorded, summarize them anonymously with:
+
+```bash
+python evaluation/analyze_usability.py --input evaluation/completed_usability.csv --output-json evaluation/usability_summary.json
+```

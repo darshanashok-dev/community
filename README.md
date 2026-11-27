@@ -55,6 +55,7 @@ project/
 ├── evaluation/
 │   ├── DATASET_PROTOCOL.md
 │   ├── USABILITY_STUDY_PROTOCOL.md
+│   ├── analyze_usability.py
 │   ├── annotation_template.csv
 │   ├── dataset_validator.py
 │   ├── evaluate_detection.py
@@ -116,7 +117,7 @@ python evaluation/evaluate_detection.py --input evaluation/synthetic_smoke_sampl
 
 ## Verification & Evaluation Status
 
-- **Automated Tests:** `86 passed` (`pytest -v`), plus Playwright Chromium verification of all 10 demonstration steps across mobile (`390x844`), tablet (`768x1024`), and desktop (`1366x768`) viewports with zero console errors or horizontal overflow.
+- **Automated Tests:** `87 passed` (`pytest -v`), plus Playwright Chromium verification of all 10 demonstration steps across mobile (`390x844`), tablet (`768x1024`), and desktop (`1366x768`) viewports with zero console errors or horizontal overflow.
 - **Dependency Check:** `pip check` clean (`No broken requirements found.`); `pip-audit --strict` clean (`No known vulnerabilities found` after upgrading `.venv` `pip` to `26.3`).
 - **Pending Human Academic Steps:**
   1. Optional live Google Safe Browsing v5 test after adding `SAFE_BROWSING_API_KEY` to `.env`.
