@@ -130,4 +130,4 @@ def api_quiz_submit():
 @main_bp.get("/health")
 def health():
     """Lightweight health check endpoint for local verification."""
-    return jsonify({"status": "ok", "phase": 6})
+    return jsonify({"status": "ok", "phase": 7})

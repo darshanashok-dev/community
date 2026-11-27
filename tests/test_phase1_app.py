@@ -41,7 +41,7 @@ def test_all_phase1_pages_load_successfully(client, path, expected_text):
 def test_health_endpoint(client):
     response = client.get("/health")
     assert response.status_code == 200
-    assert response.get_json() == {"status": "ok", "phase": 6}
+    assert response.get_json() == {"status": "ok", "phase": 7}
 
 
 def test_404_error_page(client):
