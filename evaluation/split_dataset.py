@@ -23,17 +23,30 @@ from evaluation.dataset_validator import DatasetValidationError, validate_datase
 
 
 def compute_cohens_kappa(rows: list[dict[str, str]]) -> dict[str, Any]:
-    """Compute raw agreement and Cohen's kappa between annotator_1_label and annotator_2_label."""
-    valid = [
-        (r.get("annotator_1_label", "").strip().lower(), r.get("annotator_2_label", "").strip().lower())
-        for r in rows
-        if r.get("annotator_1_label", "").strip() and r.get("annotator_2_label", "").strip()
-    ]
+    """Compute raw agreement, disagreement, missing counts, and Cohen's kappa."""
+    valid: list[tuple[str, str]] = []
+    missing_count = 0
+    for r in rows:
+        a1 = (r.get("annotator_1_label") or "").strip().lower()
+        a2 = (r.get("annotator_2_label") or "").strip().lower()
+        if a1 and a2:
+            valid.append((a1, a2))
+        else:
+            missing_count += 1
+
     n = len(valid)
     if n == 0:
-        return {"annotated_count": 0, "raw_agreement": None, "cohens_kappa": None}
+        return {
+            "annotated_count": 0,
+            "agreement_count": 0,
+            "disagreement_count": 0,
+            "missing_annotation_count": missing_count,
+            "raw_agreement": None,
+            "cohens_kappa": None,
+        }
 
     agree = sum(1 for a, b in valid if a == b)
+    disagree = n - agree
     p_o = agree / n
 
     labels = sorted({a for a, _ in valid} | {b for _, b in valid})
@@ -46,6 +59,9 @@ def compute_cohens_kappa(rows: list[dict[str, str]]) -> dict[str, Any]:
     kappa = 1.0 if p_e == 1.0 else (p_o - p_e) / (1.0 - p_e)
     return {
         "annotated_count": n,
+        "agreement_count": agree,
+        "disagreement_count": disagree,
+        "missing_annotation_count": missing_count,
         "raw_agreement": round(p_o, 4),
         "cohens_kappa": round(kappa, 4),
     }
@@ -53,6 +69,38 @@ def compute_cohens_kappa(rows: list[dict[str, str]]) -> dict[str, Any]:
 
 def _norm_text(text: str) -> str:
     return re.sub(r"\s+", " ", (text or "").strip().lower())
+
+
+def _token_set(text: str) -> set[str]:
+    return set(re.findall(r"[a-z0-9]+", (text or "").lower()))
+
+
+def find_near_duplicate_crossings(
+    dev_rows: list[dict[str, str]],
+    test_rows: list[dict[str, str]],
+    threshold: float = 0.85,
+) -> list[tuple[str, str, float]]:
+    """Detect near-duplicate message pairs across dev/test splits via token Jaccard."""
+    dev_tokens = [
+        ((r.get("sample_id") or "?").strip(), _token_set(r.get("redacted_text", "")))
+        for r in dev_rows
+    ]
+    test_tokens = [
+        ((r.get("sample_id") or "?").strip(), _token_set(r.get("redacted_text", "")))
+        for r in test_rows
+    ]
+    crossings: list[tuple[str, str, float]] = []
+    for d_id, d_tok in dev_tokens:
+        if len(d_tok) < 4:
+            continue
+        for t_id, t_tok in test_tokens:
+            if len(t_tok) < 4:
+                continue
+            union = d_tok | t_tok
+            sim = len(d_tok & t_tok) / len(union) if union else 0.0
+            if sim >= threshold:
+                crossings.append((d_id, t_id, round(sim, 3)))
+    return crossings
 
 
 def group_stratified_split(
@@ -128,6 +176,15 @@ def split_and_validate(
     if dev_texts & test_texts:
         raise DatasetValidationError(
             "Duplicate redacted_text crossed the dev/test boundary. Assign shared template_group_id values."
+        )
+
+    near_dups = find_near_duplicate_crossings(dev_rows, test_rows, threshold=0.85)
+    if near_dups:
+        sample_pair = near_dups[0]
+        raise DatasetValidationError(
+            f"Near-duplicate template leakage detected across dev/test splits "
+            f"(e.g., {sample_pair[0]} vs {sample_pair[1]}, similarity={sample_pair[2]}). "
+            "Group related templates under the same template_group_id."
         )
 
     out_dir.mkdir(parents=True, exist_ok=True)

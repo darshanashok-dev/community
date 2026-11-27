@@ -117,8 +117,8 @@ python evaluation/evaluate_detection.py --input evaluation/synthetic_smoke_sampl
 
 ## Verification & Evaluation Status
 
-- **Automated Tests:** `87 passed` (`pytest -v`), plus Playwright Chromium verification of all 10 demonstration steps across mobile (`390x844`), tablet (`768x1024`), and desktop (`1366x768`) viewports with zero console errors or horizontal overflow.
-- **Dependency Check:** `pip check` clean (`No broken requirements found.`); `pip-audit --strict` clean (`No known vulnerabilities found` after upgrading `.venv` `pip` to `26.3`).
+- **Automated Tests:** `90 passed` (`pytest -v`, zero warnings), plus Playwright Chromium verification of all 10 demonstration steps across mobile (`390x844`), tablet (`768x1024`), and desktop (`1366x768`) viewports with zero console errors or horizontal overflow.
+- **Dependency Check:** `pip check` clean (`No broken requirements found.`); online `.venv/bin/pip-audit --strict` on `2026-11-27` clean (`No known vulnerabilities found`).
 - **Pending Human Academic Steps:**
   1. Optional live Google Safe Browsing v5 test after adding `SAFE_BROWSING_API_KEY` to `.env`.
   2. Collecting, redacting, and independently annotating (two annotators) 300+ genuine messages (including 100+ genuine bank/UPI/delivery notifications) using [evaluation/annotation_template.csv](evaluation/annotation_template.csv), then running the frozen held-out evaluation.

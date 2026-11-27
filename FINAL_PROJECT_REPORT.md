@@ -212,8 +212,9 @@ Detailed in [PRIVACY_AND_SECURITY.md](PRIVACY_AND_SECURITY.md) and [SECURITY_AUD
 
 ## 17. Testing Methodology
 
-- Automated pytest suite (`tests/test_phase1_app.py` through `tests/test_phase7_end_to_end.py`) covering unit logic, routes, false-positive edge cases, mocked Safe Browsing protobuf/JSON and RDAP error paths, privacy/logging guarantees, XSS escaping, rate limiting, and end-to-end flows.
-- Evaluation pipeline (`evaluation/split_dataset.py` and `evaluation/evaluate_detection.py`) enforcing two-annotator labelling, Cohen's kappa, template-grouped 70/30 splitting, frozen rules SHA-256 verification, and comparison against a keyword-only baseline.
+- Automated pytest suite (`90` passing tests, zero warnings across `tests/test_phase1_app.py` through `tests/test_phase7_end_to_end.py` and `tests/test_improvements_qa.py`) covering unit logic, routes, false-positive edge cases, offline PSL extraction, mocked Safe Browsing protobuf/JSON and RDAP error paths, privacy/logging guarantees, XSS escaping, rate limiting, and end-to-end flows.
+- Evaluation pipeline (`evaluation/dataset_validator.py`, `evaluation/split_dataset.py`, `evaluation/evaluate_detection.py`) enforcing blank header-only `annotation_template.csv` with explicit provenance (`genuine_eval` vs `synthetic_dev`), two-annotator labelling, Cohen's kappa (`annotated_count`, `agreement_count`, `disagreement_count`, `missing_annotation_count`), template-grouped & near-duplicate-checked 70/30 splitting, frozen rules SHA-256 verification, and comparison against a keyword-only baseline.
+- Dependency security audit (`.venv/bin/pip-audit --strict` on `2026-11-27`): `No known vulnerabilities found`.
 
 ---
 

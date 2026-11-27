@@ -9,7 +9,7 @@ source .venv/bin/activate
 pytest -v
 ```
 
-Test modules (`87` automated tests total):
+Test modules (`90` automated tests total):
 - `tests/test_phase1_app.py`: App startup, all 7 pages, navigation, `/health`, 404, security headers, zero external CDNs, static assets.
 - `tests/test_phase2_message_analyser.py`: Digital-arrest scams, KYC phishing, ambiguous medium risk, benign bank/UPI/delivery messages, isolated `"OTP"`/`"urgent"` guardrails, adversarial phrasing, validation, and no-log privacy.
 - `tests/test_phase3_url_analyser.py`: IP/hex/octal hosts, subdomains, look-alikes, punycode, shorteners, privacy reduction, mocked Safe Browsing v5 protobuf/JSON responses, mocked RDAP, error/timeout/429 handling, and consent enforcement.
@@ -17,7 +17,7 @@ Test modules (`87` automated tests total):
 - `tests/test_phase5_learning_and_android.py`: Static SQLite schema verification (no user-data tables), Android permission guide & context helper, 6 lessons, 8 quiz questions, score calculation, and retry flow.
 - `tests/test_phase6_security_and_integration.py`: Extended security headers, XSS escaping, `429` rate limiting, `413`/`405` handlers, API key non-exposure, query-string log exclusion, RDAP SSRF guard, JS/template safety scans, and WCAG structural checks.
 - `tests/test_phase7_end_to_end.py`: End-to-end 10-step flows, boundary inputs, and evaluation pipeline verification.
-- `tests/test_improvements_qa.py`: Offline PSL extraction (`.com`, `.co.uk`, `.co.nz`, `.com.mx`, `.co.in`, IDN/punycode, IP/bare-suffix rejection), zero-width obfuscation & delivery OTP regressions, `score_breakdown` arithmetic, strict `genuine-eval` dataset gating, and UI polish checks.
+- `tests/test_improvements_qa.py`: Offline PSL extraction (`.com`, `.co.uk`, `.co.nz`, `.com.mx`, `.co.in`, deeply nested subdomains, IDN/punycode, IP/bare-suffix rejection, RDAP multipart-TLD payload checks), zero-width obfuscation & delivery OTP regressions, `score_breakdown` arithmetic, blank `annotation_template.csv`, Cohen's kappa counts, near-duplicate leakage detection, strict `genuine-eval` dataset gating, usability summary gating, and UI polish checks.
 
 ## 2. Detection Evaluation Methodology (`evaluation/`)
 
@@ -29,7 +29,7 @@ Test modules (`87` automated tests total):
    ```bash
    python evaluation/split_dataset.py --input evaluation/your_labelled_300.csv --out-dir evaluation/splits --mode genuine-eval
    ```
-   Computes Cohen's kappa and ensures neither `template_group_id` nor duplicate `redacted_text` crosses between `dev.csv` and `test.csv`.
+   Computes Cohen's kappa (`annotated_count`, `agreement_count`, `disagreement_count`, `missing_annotation_count`, `raw_agreement`, `cohens_kappa`) and ensures neither `template_group_id`, duplicate `redacted_text`, nor near-duplicate text (`>= 0.85` token Jaccard) crosses between `dev.csv` and `test.csv`.
 3. **Frozen Evaluation & Keyword-Only Baseline Comparison (`evaluation/evaluate_detection.py`):**
    - Tune rule weights on `dev.csv` only, freeze `app/database/message_rules.json` (verified via SHA-256 digest), then evaluate once on `test.csv`:
    ```bash

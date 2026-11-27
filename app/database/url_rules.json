@@ -119,25 +119,6 @@
     "microsoft.com",
     "whatsapp.com"
   ],
-  "multi_part_tlds": [
-    "co.in",
-    "org.in",
-    "gov.in",
-    "ac.in",
-    "nic.in",
-    "net.in",
-    "res.in",
-    "co.uk",
-    "org.uk",
-    "gov.uk",
-    "ac.uk",
-    "com.au",
-    "net.au",
-    "org.au",
-    "co.jp",
-    "com.sg",
-    "com.br"
-  ],
   "suspicious_path_keywords": [
     "login",
     "signin",

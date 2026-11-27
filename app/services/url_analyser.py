@@ -23,7 +23,8 @@ from urllib.parse import unquote, urlsplit
 import publicsuffix2
 
 DEFAULT_URL_RULES_PATH = Path(__file__).resolve().parent.parent / "database" / "url_rules.json"
-_PSL = publicsuffix2.PublicSuffixList(idna=True)
+with Path(publicsuffix2.PSL_FILE).open("r", encoding="utf-8") as _psl_handle:
+    _PSL = publicsuffix2.PublicSuffixList(psl_file=_psl_handle, idna=True)
 _NON_PUBLIC_TLDS = frozenset(
     {"localhost", "local", "internal", "invalid", "lan", "home", "arpa", "example", "test"}
 )
@@ -116,16 +117,12 @@ def _try_parse_ip_host(hostname: str) -> str | None:
     return None
 
 
-def extract_registrable_domain(
-    hostname: str,
-    multi_part_tlds: set[str] | None = None,
-) -> str | None:
+def extract_registrable_domain(hostname: str) -> str | None:
     """Extract registrable domain (eTLD+1) offline using the Mozilla Public Suffix List.
 
     Returns None for IP addresses, malformed hosts, non-public local suffixes,
     or bare public suffixes (e.g., 'co.uk', 'com.mx', 'com').
     """
-    del multi_part_tlds  # Retained only for backward signature compatibility.
     host = hostname.strip().strip(".").lower()
     if not host or "." not in host:
         return None

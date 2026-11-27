@@ -12,6 +12,7 @@ from config import TestingConfig
 from evaluation.analyze_usability import UsabilityValidationError, summarize_usability_csv
 from evaluation.dataset_validator import DatasetValidationError, validate_dataset_rows
 from evaluation.evaluate_detection import evaluate_csv
+from evaluation.split_dataset import compute_cohens_kappa, find_near_duplicate_crossings
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
@@ -31,6 +32,7 @@ def client():
         ("example.com.mx", "example.com.mx"),
         ("example.co.in", "example.co.in"),
         ("subdomain.example.co.uk", "example.co.uk"),
+        ("a.b.c.d.example.co.uk", "example.co.uk"),
         ("sub.xn--bcher-kva.de", "xn--bcher-kva.de"),
         ("xn--80ak6aa92e.com", "xn--80ak6aa92e.com"),
         ("192.0.2.1", None),
@@ -157,3 +159,64 @@ def test_usability_summary_blocks_template_and_computes_means(tmp_path):
     assert summary["meets_target_sample_size"] is False
     assert summary["mean_likert_scores_1_to_5"]["task1_clarity_1_to_5"] == 4.5
     assert summary["observation_count"] == 2
+
+
+def test_rdap_receives_psl_registrable_domain_for_multipart_tlds(client, monkeypatch):
+    import requests
+
+    seen_urls: list[str] = []
+
+    class _DummyResp:
+        def __init__(self, status_code=200, json_data=None):
+            self.status_code = status_code
+            self._json = json_data
+            self.content = b"{}"
+            self.headers = {"Content-Type": "application/json"}
+
+        def json(self):
+            return self._json
+
+    def spy_get(url, **_kwargs):
+        seen_urls.append(url)
+        if "rdap.org" in url:
+            return _DummyResp(200, {"ldhName": url.rsplit("/", 1)[-1], "events": [], "status": ["active"]})
+        return _DummyResp(200, {"fullHashes": []})
+
+    monkeypatch.setattr(requests, "get", spy_get)
+    for url, expected_reg in [
+        ("https://a.b.example.co.uk/login", "example.co.uk"),
+        ("https://portal.example.co.nz/pay", "example.co.nz"),
+        ("https://auth.example.com.mx/verify", "example.com.mx"),
+    ]:
+        res = client.post("/api/analyze-url", json={"url": url, "consent_external": True})
+        assert res.status_code == 200
+        assert res.get_json()["local_analysis"]["registrable_domain"] == expected_reg
+        assert f"https://rdap.org/domain/{expected_reg}" in seen_urls
+
+
+def test_annotation_template_has_no_prefilled_rows_and_kappa_reports_all_counts():
+    template_path = PROJECT_ROOT / "evaluation" / "annotation_template.csv"
+    with template_path.open("r", encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    assert rows == []
+
+    kappa_stats = compute_cohens_kappa(
+        [
+            {"annotator_1_label": "scam", "annotator_2_label": "scam"},
+            {"annotator_1_label": "benign", "annotator_2_label": "benign"},
+            {"annotator_1_label": "scam", "annotator_2_label": "benign"},
+            {"annotator_1_label": "scam", "annotator_2_label": ""},
+        ]
+    )
+    assert kappa_stats["annotated_count"] == 3
+    assert kappa_stats["agreement_count"] == 2
+    assert kappa_stats["disagreement_count"] == 1
+    assert kappa_stats["missing_annotation_count"] == 1
+    assert kappa_stats["cohens_kappa"] is not None
+
+    near_dups = find_near_duplicate_crossings(
+        [{"sample_id": "D1", "redacted_text": "Your bank KYC is suspended today click link to verify"}],
+        [{"sample_id": "T1", "redacted_text": "Your bank KYC is suspended today click link to verify now"}],
+        threshold=0.85,
+    )
+    assert len(near_dups) == 1
