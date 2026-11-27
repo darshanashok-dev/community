@@ -2,19 +2,19 @@
 
 A locally runnable, privacy-conscious Flask web application developed as an academic community project (RNS Institute of Technology, Dept. of CSE).
 
-## Current Status: Phase 4 — Digital-Arrest Awareness & After-Scam Assistance
+## Current Status: Phase 5 — Android Permissions, Lessons & Interactive Quizzes
 
-Implemented through Phase 4:
+Implemented through Phase 5:
 - Modular Flask application factory (`app/`) and environment-based configuration (`config.py`)
 - Security headers, `DEBUG=False` default, and privacy-aware request logging
 - Accessible, responsive HTML5/CSS3/Vanilla JS frontend covering all planned pages:
   - Home (`/`)
-  - Message Analyser (`/message-analyser` and `POST /api/analyze-message`) — active in-memory contextual rule engine integrated with Digital-Arrest & After-Scam workflows
-  - URL Analyser (`/url-analyser` and `POST /api/analyze-url`) — active text-only structural URL inspection + explicit opt-in privacy-reduced Google Safe Browsing v5 and registrable-domain RDAP lookups
-  - Digital-Arrest Awareness (`/digital-arrest` and `POST /api/digital-arrest-checklist`) — complete coercion explanations and interactive stateless call checklist
-  - After-Scam Assistance (`/after-scam`) — verified ordered recovery workflow (`1930`, `cybercrime.gov.in`, bank contact, evidence preservation) with calm, non-blaming guidance
-  - Android Permission Guide (`/android-guide`)
-  - Lessons & Official Reporting (`/learning`)
+  - Message Analyser (`/message-analyser` and `POST /api/analyze-message`)
+  - URL Analyser (`/url-analyser` and `POST /api/analyze-url`)
+  - Digital-Arrest Awareness (`/digital-arrest` and `POST /api/digital-arrest-checklist`)
+  - After-Scam Assistance (`/after-scam`)
+  - Android Permission Guide (`/android-guide`) — detailed explanations of Accessibility, Notification access, Display over other apps, and Install unknown apps, plus context review helper (no APK scanning)
+  - Lessons & Official Reporting (`/learning` and `POST /api/quiz/submit`) — 6 short scenario-based lessons, 8-question interactive quiz with explanations/scoring/retry, backed by static SQLite/JSON storage (`app/database/content.db`)
 
 ## Prerequisites
 

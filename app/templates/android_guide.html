@@ -1,60 +1,154 @@
 {% extends "base.html" %}
-{% from "components.html" import page_header, status_banner, privacy_notice %}
+{% from "components.html" import page_header, status_banner, privacy_notice, emergency_strip %}
 
 {% block title %}Android Permission Guide{% endblock %}
 
 {% block content %}
   {{ page_header(
     title="Android Special-Access Permission Guide",
-    subtitle="Understand what sensitive Android permissions do, why legitimate apps use them, how scammers may abuse them, and how to review them in Settings.",
+    subtitle="Understand what sensitive Android permissions do, why legitimate apps use them, how they can be abused, and how to review or revoke access in Settings.",
     eyebrow="Module F — Educational Permission Awareness",
-    status_badge={"kind": "info", "label": "Expanded Interactive Guide in Phase 5"}
+    status_badge={"kind": "calm", "label": "Phase 5 — Active (Guidance Only)"}
   ) }}
 
   <section class="section">
     <div class="container">
       {{ status_banner(
         kind="caution",
-        title="Educational Guidance Only — Not Malware Detection",
+        title="Educational Guidance Only — Not APK Malware Classification",
         message="Requesting a sensitive permission does not by itself prove an application is malicious. This platform does not upload, execute, scan, or classify APK files."
       ) }}
 
       <div class="grid grid--2 section__header--spaced">
-        <article class="card">
-          <h2 class="card__title">1. Accessibility Access</h2>
-          <p class="card__text">
-            Designed to assist users with disabilities by reading screen content and performing automated interface actions. Legitimate screen readers rely on it; abusive apps can read OTPs or perform unauthorised taps.
-          </p>
-        </article>
-        <article class="card">
-          <h2 class="card__title">2. Notification Access</h2>
-          <p class="card__text">
-            Allows companion apps (such as smartwatches or call-screeners) to display or manage notifications. If abused, an app could silently read incoming banking alerts and OTPs.
-          </p>
-        </article>
-        <article class="card">
-          <h2 class="card__title">3. Display Over Other Apps</h2>
-          <p class="card__text">
-            Used legitimately by chat bubbles, floating timers, and screen-dimming tools. Maliciously, overlays can hide warning prompts or mimic legitimate login screens.
-          </p>
-        </article>
-        <article class="card">
-          <h2 class="card__title">4. Install Unknown Apps</h2>
-          <p class="card__text">
-            Permits a browser, file manager, or messaging app to install APK packages outside an official app store. Scammers often send APK files over chat pretending to be bank updates or e-challans.
-          </p>
-        </article>
-      </div>
+        {% for perm in permissions %}
+          <article class="card perm-card" id="perm-{{ perm.id }}">
+            <span class="card__tag">Special Android Access</span>
+            <h2 class="card__title">{{ perm.name }}</h2>
 
-      <div class="section__header--spaced">
-        {{ privacy_notice(
-          title="Scheduled for Phase 5",
-          items=[
-            "Detailed breakdown of legitimate uses, abuse scenarios, and step-by-step Android Settings paths for each permission.",
-            "Interactive educational checklist explaining why context (who sent the app and why it requests access) matters."
-          ]
-        ) }}
+            <div class="perm-card__block">
+              <h3 class="perm-card__sub">What it does</h3>
+              <p class="card__text">{{ perm.what_it_does }}</p>
+            </div>
+
+            <div class="perm-card__block">
+              <h3 class="perm-card__sub">Legitimate uses</h3>
+              <ul class="plain-list">
+                {% for item in perm.legitimate_uses %}
+                  <li>{{ item }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+
+            <div class="perm-card__block">
+              <h3 class="perm-card__sub">Possible abuse</h3>
+              <ul class="plain-list">
+                {% for item in perm.potential_abuse %}
+                  <li>{{ item }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+
+            <div class="perm-card__block">
+              <h3 class="perm-card__sub">User precautions</h3>
+              <ul class="plain-list">
+                {% for item in perm.precautions %}
+                  <li>{{ item }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+
+            <div class="perm-card__settings">
+              <strong>How to review or revoke in Android Settings:</strong>
+              <p class="card__text">{{ perm.android_settings_path }}</p>
+            </div>
+          </article>
+        {% endfor %}
       </div>
     </div>
   </section>
+
+  <section class="section section--tinted" id="permission-context-helper" aria-labelledby="perm-helper-heading">
+    <div class="container layout-split">
+      <div class="layout-split__main">
+        <div class="section__header">
+          <span class="eyebrow">Interactive Context Helper</span>
+          <h2 id="perm-helper-heading" class="section__title">Review a Permission Request in Context</h2>
+          <p class="section__subtitle">
+            Select the permissions an app is requesting and how you received the app to read tailored safety precautions (no malware verdict is produced).
+          </p>
+        </div>
+
+        {% if review_result %}
+          <section class="result-panel" id="permission-review-result" aria-labelledby="perm-review-title">
+            <h3 id="perm-review-title" class="result-panel__title">
+              Educational Guidance
+              <span class="badge badge--info">Advisory Only</span>
+            </h3>
+            <ul class="plain-list">
+              {% for point in review_result.guidance_points %}
+                <li>{{ point }}</li>
+              {% endfor %}
+            </ul>
+            {% if review_result.selected_permissions %}
+              <div class="result-block">
+                <h4 class="result-block__title">Where to Review Selected Permissions</h4>
+                <ul class="plain-list">
+                  {% for sp in review_result.selected_permissions %}
+                    <li><strong>{{ sp.name }}:</strong> {{ sp.android_settings_path }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+            <p class="form-hint">{{ review_result.disclaimer }}</p>
+          </section>
+        {% endif %}
+
+        <form class="panel-form" method="post" action="{{ url_for('main.android_guide') }}#permission-context-helper">
+          <fieldset class="form-fieldset">
+            <legend class="form-legend">1. Which special permissions is the app requesting?</legend>
+            <div class="checklist-options">
+              {% for perm in permissions %}
+                <label class="checklist-option">
+                  <input
+                    type="checkbox"
+                    name="permissions"
+                    value="{{ perm.id }}"
+                    {% if perm.id in selected_perms %}checked{% endif %}
+                  >
+                  <span><strong>{{ perm.name }}</strong> — {{ perm.what_it_does }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          </fieldset>
+
+          <div class="form-group">
+            <label class="form-label" for="app-source">2. Where did the app come from?</label>
+            <select class="form-control" id="app-source" name="app_source">
+              <option value="official_store" {% if selected_source == 'official_store' %}selected{% endif %}>Official app store (e.g., Google Play Store)</option>
+              <option value="chat_or_link" {% if selected_source == 'chat_or_link' %}selected{% endif %}>APK file sent via WhatsApp, SMS, or a web link</option>
+              <option value="unsure" {% if selected_source == 'unsure' %}selected{% endif %}>Not sure / already installed on the phone</option>
+            </select>
+          </div>
+
+          <div class="form-actions form-actions--wrap">
+            <button type="submit" class="btn btn--primary">View Educational Guidance</button>
+            <a class="btn btn--quiet" href="{{ url_for('main.android_guide') }}#permission-context-helper">Reset</a>
+          </div>
+        </form>
+      </div>
+
+      <aside class="layout-split__side">
+        {{ privacy_notice(
+          title="Android Scope Boundaries",
+          items=[
+            "No APK files are uploaded, parsed, executed, or classified here.",
+            "Permission selections are processed in memory only and never stored.",
+            "If you installed an unverified APK and suspect fraud, disconnect from the internet, remove it, and follow After-Scam Assistance."
+          ]
+        ) }}
+      </aside>
+    </div>
+  </section>
+
+  {{ emergency_strip() }}
 {% endblock %}

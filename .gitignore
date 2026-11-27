@@ -28,3 +28,4 @@ Thumbs.db
 logs/
 *.log
 tmp/
+app/database/content.db

@@ -38,8 +38,10 @@ def create_app(config_class: type[Config] = Config) -> Flask:
 
     _configure_logging(app)
 
+    from app.database.content_store import init_static_content_db
     from app.routes import register_blueprints
 
+    init_static_content_db()
     register_blueprints(app)
 
     @app.before_request
@@ -85,7 +87,7 @@ def create_app(config_class: type[Config] = Config) -> Flask:
         return {
             "app_name": app.config["APP_NAME"],
             "project_title": app.config["PROJECT_TITLE"],
-            "current_phase": 4,
+            "current_phase": 5,
         }
 
     @app.errorhandler(404)

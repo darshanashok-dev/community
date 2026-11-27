@@ -1,59 +1,189 @@
 {% extends "base.html" %}
-{% from "components.html" import page_header, status_banner %}
+{% from "components.html" import page_header, status_banner, privacy_notice, emergency_strip %}
 
 {% block title %}Lessons &amp; Reporting{% endblock %}
 
 {% block content %}
   {{ page_header(
     title="Cybersecurity Lessons, Quizzes & Official Reporting",
-    subtitle="Build practical scam-recognition skills with scenario-based lessons and find verified official reporting portals.",
+    subtitle="Build practical scam-recognition skills with short scenario-based lessons, test your knowledge with an interactive quiz, and find verified official reporting portals.",
     eyebrow="Modules G &amp; H — Learning &amp; Official Resources",
-    status_badge={"kind": "info", "label": "Lessons & Quizzes Scheduled for Phase 5"}
+    status_badge={"kind": "calm", "label": "Phase 5 — Active (SQLite/JSON Static Content)"}
   ) }}
 
-  <section class="section">
+  <section class="section" aria-labelledby="lessons-heading">
     <div class="container">
-      {{ status_banner(
-        kind="info",
-        title="Interactive Lessons and Quizzes Scheduled for Phase 5",
-        message="Structured short lessons, fictional scenario quizzes, score calculation, and retry support will be added in Phase 5 using static SQLite/JSON content."
-      ) }}
+      <div class="section__header">
+        <h2 id="lessons-heading" class="section__title">Short Scenario-Based Lessons</h2>
+        <p class="section__subtitle">
+          All scenarios below are fictional educational examples designed to highlight practical warning signs.
+        </p>
+      </div>
 
-      <div class="grid grid--2 section__header--spaced">
-        <article class="card">
-          <h2 class="card__title">Planned Lesson Topics (Phase 5)</h2>
-          <ul class="plain-list">
-            <li>Spotting phishing &amp; smishing clues in context</li>
-            <li>Reading suspicious URLs without clicking them</li>
-            <li>Recognising digital-arrest coercion tactics</li>
-            <li>OTP, UPI PIN, and everyday banking safety</li>
-            <li>Understanding sensitive Android app permissions</li>
-            <li>When and how to report cybercrime</li>
-          </ul>
-        </article>
+      <div class="grid grid--2">
+        {% for lesson in lessons %}
+          <article class="card lesson-card" id="lesson-{{ lesson.id }}">
+            <span class="card__tag">{{ lesson.topic }}</span>
+            <h3 class="card__title">{{ lesson.title }}</h3>
+            <p class="card__text">{{ lesson.summary }}</p>
 
-        <article class="card">
-          <h2 class="card__title">Official Reporting &amp; Advisory Resources</h2>
-          <ul class="resource-list">
-            <li>
-              <strong>National Cyber Crime Helpline — 1930</strong>
-              <p>Immediate telephonic reporting for financial cyber fraud in India.</p>
-            </li>
-            <li>
-              <strong>National Cyber Crime Reporting Portal — cybercrime.gov.in</strong>
-              <p>Official Government of India (I4C / MHA) portal to lodge cybercrime complaints and read advisories.</p>
-            </li>
-            <li>
-              <strong>CERT-In — cert-in.org.in</strong>
-              <p>Indian Computer Emergency Response Team advisories on online scams and security practices.</p>
-            </li>
-            <li>
-              <strong>After-Scam Guided Checklist</strong>
-              <p><a href="{{ url_for('main.after_scam') }}">Open our ordered post-scam action steps</a>.</p>
-            </li>
-          </ul>
-        </article>
+            <div class="scenario-box">
+              <strong>Scenario Example:</strong>
+              <p class="card__text">{{ lesson.fictional_scenario }}</p>
+            </div>
+
+            <div>
+              <h4 class="perm-card__sub">Key takeaways</h4>
+              <ul class="plain-list">
+                {% for point in lesson.key_takeaways %}
+                  <li>{{ point }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+
+            <div class="card__actions">
+              <a class="btn btn--secondary" href="{{ url_for(lesson.related_endpoint) }}">{{ lesson.related_label }}</a>
+            </div>
+          </article>
+        {% endfor %}
       </div>
     </div>
   </section>
+
+  <section class="section section--tinted" id="quiz" aria-labelledby="quiz-heading">
+    <div class="container">
+      <div class="section__header">
+        <span class="eyebrow">Interactive Knowledge Check</span>
+        <h2 id="quiz-heading" class="section__title">Cybersecurity Awareness Quiz ({{ questions | length }} Questions)</h2>
+        <p class="section__subtitle">
+          Select the best response for each fictional scenario, submit to see your score and detailed explanations, and retry anytime.
+        </p>
+      </div>
+
+      {% if quiz_result %}
+        <section class="result-panel" id="quiz-result" aria-labelledby="quiz-result-heading">
+          <div class="result-panel__header">
+            <div>
+              <span class="eyebrow">Quiz Score Summary</span>
+              <h3 id="quiz-result-heading" class="result-panel__title">
+                Your Score: {{ quiz_result.correct_count }} / {{ quiz_result.total_questions }} ({{ quiz_result.percentage }}%)
+                <span class="badge badge--{{ quiz_result.badge_kind }}">
+                  {{ quiz_result.answered_count }} of {{ quiz_result.total_questions }} answered
+                </span>
+              </h3>
+            </div>
+            <div class="score-meter" aria-hidden="true">
+              <div class="score-meter__fill score-meter__fill--{{ quiz_result.badge_kind }}" data-score="{{ quiz_result.percentage }}"></div>
+            </div>
+          </div>
+
+          <p class="result-panel__summary">{{ quiz_result.feedback }}</p>
+
+          <div class="result-block">
+            <h4 class="result-block__title">Question-by-Question Review</h4>
+            <ul class="indicator-list">
+              {% for qr in quiz_result.question_results %}
+                <li class="indicator-item {{ 'indicator-item--benign' if qr.is_correct else 'indicator-item--combo' }}">
+                  <div class="indicator-item__head">
+                    <div>
+                      <span class="card__tag">{{ qr.topic }}</span>
+                      <strong class="indicator-item__title">{{ qr.question }}</strong>
+                    </div>
+                    <span class="badge badge--{{ 'calm' if qr.is_correct else 'urgent' }}">
+                      {{ 'Correct' if qr.is_correct else 'Incorrect' }}
+                    </span>
+                  </div>
+                  <p class="indicator-item__text"><strong>Your answer:</strong> {{ qr.chosen_text }}</p>
+                  {% if not qr.is_correct %}
+                    <p class="indicator-item__text"><strong>Recommended answer:</strong> {{ qr.correct_text }}</p>
+                  {% endif %}
+                  <p class="indicator-item__text"><strong>Explanation:</strong> {{ qr.explanation }}</p>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <div class="result-block__links">
+            <a class="btn btn--primary" href="{{ url_for('main.learning') }}#quiz">Retry Quiz</a>
+          </div>
+        </section>
+      {% endif %}
+
+      <form class="panel-form" method="post" action="{{ url_for('main.learning') }}#quiz">
+        {% for q in questions %}
+          <fieldset class="form-fieldset quiz-question">
+            <legend class="form-legend">
+              Q{{ loop.index }}. [{{ q.topic }}] {{ q.question }}
+            </legend>
+            <div class="checklist-options">
+              {% for opt in q.options %}
+                <label class="checklist-option">
+                  <input
+                    type="radio"
+                    name="answer_{{ q.id }}"
+                    value="{{ opt.id }}"
+                    {% if submitted_answers.get(q.id) == opt.id %}checked{% endif %}
+                  >
+                  <span>{{ opt.text }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          </fieldset>
+        {% endfor %}
+
+        <div class="form-actions form-actions--wrap">
+          <button type="submit" class="btn btn--primary">Submit Quiz Answers</button>
+          <a class="btn btn--quiet" href="{{ url_for('main.learning') }}#quiz">Reset / Retry Quiz</a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="section" id="reporting-resources" aria-labelledby="reporting-heading">
+    <div class="container layout-split">
+      <div class="layout-split__main">
+        <div class="section__header">
+          <h2 id="reporting-heading" class="section__title">Official Reporting &amp; Awareness Resources</h2>
+          <p class="section__subtitle">
+            Verified Indian cybercrime reporting and advisory portals.
+          </p>
+        </div>
+
+        <div class="card">
+          <ul class="resource-list">
+            <li>
+              <strong>National Cyber Crime Helpline — Dial 1930</strong>
+              <p>24/7 toll-free national helpline for immediate reporting of online financial fraud so banks can attempt to freeze disputed transactions (CFCFRMS).</p>
+            </li>
+            <li>
+              <strong>National Cyber Crime Reporting Portal — <span class="mono-text">cybercrime.gov.in</span></strong>
+              <p>Official Government of India (I4C / Ministry of Home Affairs) portal for reporting digital-arrest threats, phishing, financial cyber fraud, and tracking complaint acknowledgements.</p>
+            </li>
+            <li>
+              <strong>Indian Computer Emergency Response Team — <span class="mono-text">cert-in.org.in</span></strong>
+              <p>Publishes official cybersecurity advisories on online scams (such as CIAD-2024-0050) and handles technical security incident reporting for organisations.</p>
+            </li>
+            <li>
+              <strong>After-Scam Ordered Recovery Workflow</strong>
+              <p><a href="{{ url_for('main.after_scam') }}">Open our 6-step post-scam assistance checklist</a> for calm guidance and evidence preparation.</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <aside class="layout-split__side">
+        {{ privacy_notice(
+          title="Quiz & Learning Privacy",
+          items=[
+            "Lessons and quiz questions are stored as static educational content in SQLite/JSON.",
+            "Your quiz answers are scored transiently in memory—no personal scores or identifiers are saved.",
+            "All scenarios are fictional educational examples."
+          ]
+        ) }}
+      </aside>
+    </div>
+  </section>
+
+  {{ emergency_strip() }}
+  <script src="{{ url_for('static', filename='js/learning.js') }}" defer></script>
 {% endblock %}

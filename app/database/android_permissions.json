@@ -1,0 +1,77 @@
+{
+  "version": "1.0.0",
+  "permissions": [
+    {
+      "id": "accessibility",
+      "name": "Accessibility Access",
+      "what_it_does": "Allows an application to read on-screen text, detect interface changes, and perform taps or navigation actions on your behalf.",
+      "legitimate_uses": [
+        "Screen readers and voice assistants for users with visual or motor impairments",
+        "Trusted password-manager autofill helpers and assistive automation tools"
+      ],
+      "potential_abuse": [
+        "Silently reading OTPs, banking balances, and private messages displayed on screen",
+        "Performing hidden clicks, approving transfers, or preventing you from uninstalling the app"
+      ],
+      "precautions": [
+        "Only enable Accessibility for well-known assistive apps you intentionally installed from an official store.",
+        "Never grant Accessibility access because a caller, support agent, or prize link asked you to."
+      ],
+      "android_settings_path": "Settings -> Accessibility -> Downloaded apps / Installed services -> Select the app -> Turn off if unneeded (labels vary slightly by phone brand)."
+    },
+    {
+      "id": "notification_access",
+      "name": "Notification Access",
+      "what_it_does": "Permits an application to read, dismiss, or trigger actions from notifications posted by other apps.",
+      "legitimate_uses": [
+        "Smartwatch and fitness-band companion apps displaying alerts on your wrist",
+        "Trusted call-management or notification-history utilities"
+      ],
+      "potential_abuse": [
+        "Capturing bank SMS alerts, UPI payment notifications, and login OTPs as soon as they arrive",
+        "Dismissing genuine bank fraud warnings before you notice them"
+      ],
+      "precautions": [
+        "Regularly check which apps can read your notifications and disable any unfamiliar entries.",
+        "A calculator, wallpaper, flashlight, or PDF viewer has no legitimate reason to read all notifications."
+      ],
+      "android_settings_path": "Settings -> Apps -> Special app access -> Notification read, reply & control / Notification access -> Toggle off unfamiliar apps."
+    },
+    {
+      "id": "display_over_apps",
+      "name": "Display Over Other Apps (Overlay)",
+      "what_it_does": "Lets an application draw floating windows, buttons, or full-screen layers on top of other running apps.",
+      "legitimate_uses": [
+        "Floating chat bubbles, video picture-in-picture windows, and call-ID popups",
+        "Blue-light filters, floating timers, and screen-recording toolbars"
+      ],
+      "potential_abuse": [
+        "Drawing fake banking login screens on top of real apps to capture credentials",
+        "Hiding system permission prompts ('tapjacking') so you unknowingly approve sensitive settings"
+      ],
+      "precautions": [
+        "Review overlay permissions for newly installed or seldom-used apps.",
+        "Close unexpected floating popups before entering any PIN, password, or OTP."
+      ],
+      "android_settings_path": "Settings -> Apps -> Special app access -> Display over other apps -> Disable for apps that do not need floating windows."
+    },
+    {
+      "id": "install_unknown_apps",
+      "name": "Install Unknown Apps",
+      "what_it_does": "Allows a browser, file manager, or messaging app to install Android application packages (.apk files) from outside an official app store.",
+      "legitimate_uses": [
+        "Installing vetted enterprise software provided by an employer's IT department",
+        "Testing apps you developed yourself during software development"
+      ],
+      "potential_abuse": [
+        "Installing disguised malicious APKs sent over WhatsApp or SMS as fake 'e-challan', 'courier update', or 'bank KYC' apps",
+        "Bypassing official app-store security screening"
+      ],
+      "precautions": [
+        "Keep 'Install unknown apps' set to Not Allowed for WhatsApp, Telegram, SMS apps, and web browsers.",
+        "Never install an APK file sent by an unknown contact, customer-care caller, or urgent delivery link."
+      ],
+      "android_settings_path": "Settings -> Apps -> Special app access -> Install unknown apps -> Set browsers, messaging apps, and file managers to Not allowed."
+    }
+  ]
+}

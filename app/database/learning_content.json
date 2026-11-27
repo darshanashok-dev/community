@@ -1,0 +1,195 @@
+{
+  "version": "1.0.0",
+  "lessons": [
+    {
+      "id": "phishing_recognition",
+      "title": "1. Recognising Phishing & Smishing in Context",
+      "topic": "Phishing Recognition",
+      "summary": "Phishing messages impersonate trusted organisations (banks, courier services, utilities) and combine urgency with a request to click a link, share an OTP, or call an unverified number.",
+      "fictional_scenario": "Fictional example: An SMS claims 'Your electricity connection will be cut tonight at 9:30 PM due to unpaid bill. Call officer on 98XXXXXX12 immediately.' Notice the sudden deadline, fear of disconnection, and personal 10-digit mobile number instead of an official utility app.",
+      "key_takeaways": [
+        "Check context rather than single words: an isolated word like 'OTP' or 'urgent' is not enough on its own.",
+        "Legitimate banks and utilities never force you to pay or share OTPs through random mobile numbers or short deadlines.",
+        "Always verify inside the official app or by dialling the helpline printed on your card or bill."
+      ],
+      "related_endpoint": "analyzer.message_analyser",
+      "related_label": "Try the Message Analyser"
+    },
+    {
+      "id": "suspicious_urls",
+      "title": "2. Inspecting Suspicious URLs Without Clicking",
+      "topic": "Suspicious URLs",
+      "summary": "Deceptive links often disguise the real controlling domain using subdomains, look-alike spellings, IP addresses, punycode characters, or unverified link shorteners.",
+      "fictional_scenario": "Fictional example: In 'https://sbi.co.in.kyc-verify.example/login', the familiar text 'sbi.co.in' is only a subdomain on the left, while the true controlling domain on the right is 'kyc-verify.example'.",
+      "key_takeaways": [
+        "Read the registrable domain immediately before the first single '/' (moving left from the top-level domain).",
+        "Be cautious of shortened URLs (such as bit.ly) in unexpected messages—their final destination cannot be verified until opened.",
+        "Never install '.apk' files downloaded from SMS or messaging links."
+      ],
+      "related_endpoint": "analyzer.url_analyser",
+      "related_label": "Try the URL Analyser"
+    },
+    {
+      "id": "digital_arrest_scams",
+      "title": "3. Understanding Digital-Arrest Scams",
+      "topic": "Digital-Arrest Scams",
+      "summary": "Scammers impersonate Police, CBI, Customs, TRAI, or RBI officials, claim your identity is linked to a crime, pressure you to stay on a video call, demand secrecy, and push you to transfer savings into a 'safe account'.",
+      "fictional_scenario": "Fictional example: A caller claiming to be from Customs and Cyber Police accuses Meera (fictional character) of sending an illegal parcel, shows a fake warrant on WhatsApp video, forbids her from telling her spouse, and asks for a 'refundable verification deposit'.",
+      "key_takeaways": [
+        "Indian law enforcement does not conduct 'digital arrests' or detain people on video calls.",
+        "No RBI, court, or police 'safe account' exists for holding your personal funds.",
+        "Hanging up immediately and telling a family member breaks the scammer's psychological isolation."
+      ],
+      "related_endpoint": "main.digital_arrest",
+      "related_label": "Open Digital-Arrest Call Checklist"
+    },
+    {
+      "id": "otp_banking_safety",
+      "title": "4. OTP, UPI PIN & Everyday Banking Safety",
+      "topic": "OTP & Banking Safety",
+      "summary": "OTPs and UPI PINs authorise outgoing money transfers and account access. You never need to enter a UPI PIN or scan a QR code to receive a payment or refund.",
+      "fictional_scenario": "Fictional example: On an online marketplace, a buyer (fictional) offers to pay immediately and sends a QR code saying 'Scan and enter your UPI PIN to receive Rs. 4,500.' Entering a UPI PIN actually debits money from the seller's account.",
+      "key_takeaways": [
+        "Receiving money via UPI never requires entering your UPI PIN or scanning a payment QR code.",
+        "Genuine OTP SMS alerts state what transaction they authorise and warn you never to share them.",
+        "Never read out an OTP to any caller—even if they know your name or partial card digits."
+      ],
+      "related_endpoint": "analyzer.message_analyser",
+      "related_label": "Check a Suspicious Payment Message"
+    },
+    {
+      "id": "permission_abuse",
+      "title": "5. Android Permission Abuse & Sideloaded APKs",
+      "topic": "Permission Abuse",
+      "summary": "Sensitive permissions such as Accessibility, Notification access, Display over other apps, and Install unknown apps have legitimate uses, but can be abused if granted to untrusted apps—especially APKs sent over chat.",
+      "fictional_scenario": "Fictional example: A fictional message says 'Traffic e-Challan pending—install eChallan_Notice.apk to view photo.' Once installed via 'Install unknown apps', the app asks for Accessibility and Notification access, allowing it to read incoming banking OTPs.",
+      "key_takeaways": [
+        "Permission presence alone never proves an app is malicious—context (who sent the app and why it needs that permission) matters.",
+        "Keep 'Install unknown apps' disabled for messaging apps and browsers.",
+        "Review Accessibility, Notification access, and Overlay permissions in Android Settings periodically."
+      ],
+      "related_endpoint": "main.android_guide",
+      "related_label": "Open Android Permission Guide"
+    },
+    {
+      "id": "cybercrime_reporting",
+      "title": "6. Acting Quickly & Reporting Cybercrime",
+      "topic": "Cybercrime Reporting",
+      "summary": "If money is lost or credentials are exposed, fast calm action helps banks flag and freeze disputed transfers. Victims are never to blame.",
+      "fictional_scenario": "Fictional example: After realising a transfer was fraudulent, Aarav (fictional) immediately dials 1930, files a complaint on cybercrime.gov.in with the UTR number and chat screenshots, and calls his bank's card-block helpline printed on his debit card.",
+      "key_takeaways": [
+        "Call 1930 immediately for financial cyber fraud and lodge a complaint at cybercrime.gov.in.",
+        "Contact your bank using official numbers and preserve UTR numbers, screenshots, and caller details.",
+        "Ignore anyone claiming they can recover stolen money for an upfront fee."
+      ],
+      "related_endpoint": "main.after_scam",
+      "related_label": "Open After-Scam Recovery Steps"
+    }
+  ],
+  "quiz_questions": [
+    {
+      "id": "q1",
+      "topic": "Phishing Recognition",
+      "question": "You receive an SMS: 'Your HDFC NetBanking OTP is 482910. Valid for 5 mins. Do not share this OTP with anyone.' What is the best interpretation?",
+      "options": [
+        {"id": "a", "text": "It is definitely a scam solely because it contains the word 'OTP'."},
+        {"id": "b", "text": "It uses standard anti-sharing wording; if you did not initiate a login, secure your account via the official app without clicking unknown links."},
+        {"id": "c", "text": "You should forward the OTP to customer support to cancel the login."},
+        {"id": "d", "text": "It is guaranteed 100% safe to ignore even if you didn't request an OTP."}
+      ],
+      "correct_option": "b",
+      "explanation": "An isolated 'OTP' notice with 'Do not share' wording is standard bank phrasing. However, receiving an unrequested OTP means someone may be trying to log in—check your official bank app directly and never share the code."
+    },
+    {
+      "id": "q2",
+      "topic": "Suspicious URLs",
+      "question": "Which domain actually controls the web address 'https://indiapost.gov.in.parcel-track-update.xyz/pay'?",
+      "options": [
+        {"id": "a", "text": "indiapost.gov.in"},
+        {"id": "b", "text": "gov.in"},
+        {"id": "c", "text": "parcel-track-update.xyz"},
+        {"id": "d", "text": "pay"}
+      ],
+      "correct_option": "c",
+      "explanation": "In a URL host, the registrable domain sits just before the first single '/'. Here 'indiapost.gov.in' is only a misleading subdomain placed under 'parcel-track-update.xyz'."
+    },
+    {
+      "id": "q3",
+      "topic": "Digital-Arrest Scams",
+      "question": "A caller claiming to be a CBI officer on Skype video says you are under 'digital arrest', forbids you from telling your family, and tells you to transfer savings to an 'RBI safe account' for verification. What should you do?",
+      "options": [
+        {"id": "a", "text": "Stay on the video call politely until the officer completes the inquiry."},
+        {"id": "b", "text": "Transfer a small amount first to prove your bank account is legitimate."},
+        {"id": "c", "text": "Hang up immediately, talk to a trusted family member or local police, and never transfer money."},
+        {"id": "d", "text": "Send a photo of your Aadhaar and PAN to speed up clearance."}
+      ],
+      "correct_option": "c",
+      "explanation": "Indian law enforcement never conducts 'digital arrests', never demands secrecy on video calls, and has no 'RBI safe account' for personal transfers. Disconnecting breaks the scammer's coercion."
+    },
+    {
+      "id": "q4",
+      "topic": "OTP & Banking Safety",
+      "question": "When selling an item online, a buyer sends a QR code and asks you to scan it and enter your UPI PIN to receive your payment. What happens if you enter your UPI PIN?",
+      "options": [
+        {"id": "a", "text": "You receive the buyer's payment faster."},
+        {"id": "b", "text": "Money is debited from your own bank account—UPI PINs authorise outgoing payments, not incoming receipts."},
+        {"id": "c", "text": "Your UPI ID is verified without moving any money."},
+        {"id": "d", "text": "The bank holds the buyer's funds in escrow."}
+      ],
+      "correct_option": "b",
+      "explanation": "You never enter a UPI PIN or scan a payment QR code to receive money. Entering a UPI PIN authorises an outgoing debit from your account."
+    },
+    {
+      "id": "q5",
+      "topic": "Permission Abuse",
+      "question": "A legitimate smartwatch companion app requests Notification Access, while an unknown 'eChallan.apk' sent on WhatsApp also requests Notification Access and Accessibility. What does this illustrate?",
+      "options": [
+        {"id": "a", "text": "Any app that requests Notification Access is automatically malware."},
+        {"id": "b", "text": "Permission presence alone does not prove an app is malicious—source and context determine whether the access makes sense."},
+        {"id": "c", "text": "Installing APK files from WhatsApp is safe as long as the icon looks official."},
+        {"id": "d", "text": "Accessibility access only changes font sizes and cannot read OTPs."}
+      ],
+      "correct_option": "b",
+      "explanation": "Permissions have both legitimate uses and potential abuse. A permission list by itself cannot classify an app as malware, but sideloading an unsolicited APK from chat and granting it sensitive access is high-risk."
+    },
+    {
+      "id": "q6",
+      "topic": "Suspicious URLs",
+      "question": "Why does a privacy-conscious URL analyser label a shortened link like 'https://bit.ly/example123' as 'Destination not verified' instead of opening it automatically?",
+      "options": [
+        {"id": "a", "text": "Because opening or following redirects on unknown links could notify attackers, trigger tracking tokens, or expose the server to malicious content."},
+        {"id": "b", "text": "Because all bit.ly links are guaranteed to be phishing websites."},
+        {"id": "c", "text": "Because URL shorteners only work on mobile phones."},
+        {"id": "d", "text": "Because HTTPS links cannot have redirects."}
+      ],
+      "correct_option": "a",
+      "explanation": "Expanding shorteners or fetching destination pages triggers outbound HTTP requests to unknown servers. Text-only inspection keeps you safe while transparently noting the destination is unverified."
+    },
+    {
+      "id": "q7",
+      "topic": "Cybercrime Reporting",
+      "question": "If someone realises they were tricked into transferring money in an online scam, what should their first immediate actions in India be?",
+      "options": [
+        {"id": "a", "text": "Delete all chat screenshots out of embarrassment and wait a week."},
+        {"id": "b", "text": "Pay a social-media 'cyber recovery agent' to trace the funds."},
+        {"id": "c", "text": "Call 1930 immediately, report at cybercrime.gov.in, contact the bank using official numbers, and preserve UTR/chat evidence."},
+        {"id": "d", "text": "Reply to the scammer asking for a refund."}
+      ],
+      "correct_option": "c",
+      "explanation": "Victims are never to blame. Calling 1930 quickly logs the fraud in CFCFRMS to help freeze funds, while reporting on cybercrime.gov.in, alerting the bank, and preserving records supports official investigation."
+    },
+    {
+      "id": "q8",
+      "topic": "Permission Abuse",
+      "question": "Which Android special-access setting should remain disabled for WhatsApp and web browsers to prevent accidental installation of unverified APK files sent in chats?",
+      "options": [
+        {"id": "a", "text": "Dark Mode"},
+        {"id": "b", "text": "Install unknown apps"},
+        {"id": "c", "text": "Battery optimization"},
+        {"id": "d", "text": "Bluetooth scanning"}
+      ],
+      "correct_option": "b",
+      "explanation": "Keeping 'Install unknown apps' set to Not Allowed for messaging apps and browsers prevents one-tap installation of malicious APK packages sent via chat or phishing links."
+    }
+  ]
+}
