@@ -18,9 +18,16 @@ import re
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
-from urllib.parse import unquote, urlsplit, urlunsplit
+from urllib.parse import unquote, urlsplit
+
+import publicsuffix2
 
 DEFAULT_URL_RULES_PATH = Path(__file__).resolve().parent.parent / "database" / "url_rules.json"
+_PSL = publicsuffix2.PublicSuffixList(idna=True)
+_NON_PUBLIC_TLDS = frozenset(
+    {"localhost", "local", "internal", "invalid", "lan", "home", "arpa", "example", "test"}
+)
+_DNS_LABEL_RE = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$", re.IGNORECASE)
 
 _SHORTHAND_OR_RADIX_IP_RE = re.compile(
     r"^(?:0x[0-9a-f]+|0[0-7]+|\d+)(?:\.(?:0x[0-9a-f]+|0[0-7]+|\d+)){0,3}$",
@@ -109,25 +116,41 @@ def _try_parse_ip_host(hostname: str) -> str | None:
     return None
 
 
-def extract_registrable_domain(hostname: str, multi_part_tlds: set[str]) -> str | None:
-    """Extract registrable domain (eTLD+1) from a valid public hostname, or None if invalid/IP."""
-    host = hostname.strip(".").lower()
+def extract_registrable_domain(
+    hostname: str,
+    multi_part_tlds: set[str] | None = None,
+) -> str | None:
+    """Extract registrable domain (eTLD+1) offline using the Mozilla Public Suffix List.
+
+    Returns None for IP addresses, malformed hosts, non-public local suffixes,
+    or bare public suffixes (e.g., 'co.uk', 'com.mx', 'com').
+    """
+    del multi_part_tlds  # Retained only for backward signature compatibility.
+    host = hostname.strip().strip(".").lower()
     if not host or "." not in host:
         return None
     if _try_parse_ip_host(host) is not None:
         return None
 
-    labels = [lbl for lbl in host.split(".") if lbl]
-    if len(labels) < 2:
+    try:
+        ascii_host = host.encode("idna").decode("ascii").lower()
+    except UnicodeError:
         return None
 
-    tld = labels[-1]
-    if tld in {"localhost", "local", "internal", "invalid", "lan", "home", "arpa"}:
+    labels = ascii_host.split(".")
+    if len(labels) < 2 or any(not lbl or not _DNS_LABEL_RE.match(lbl) for lbl in labels):
         return None
 
-    if len(labels) >= 3 and f"{labels[-2]}.{labels[-1]}" in multi_part_tlds:
-        return ".".join(labels[-3:])
-    return ".".join(labels[-2:])
+    if labels[-1] in _NON_PUBLIC_TLDS:
+        return None
+
+    sld = _PSL.get_sld(ascii_host, strict=True)
+    tld = _PSL.get_tld(ascii_host)
+    if not sld or not tld or sld == tld:
+        return None
+    if "." not in sld:
+        return None
+    return sld
 
 
 def _has_mixed_or_non_ascii_script(hostname: str) -> bool:
@@ -260,7 +283,6 @@ def prepare_privacy_reduced_indicators(
 ) -> dict[str, Any]:
     """Strip sensitive components and prepare 4-byte SHA-256 prefixes + registrable domain."""
     rules = load_url_rules(rules_path)
-    multi_part_tlds = set(rules["multi_part_tlds"])
     shorteners = set(rules["shorteners"])
 
     parsed = urlsplit(raw_url.strip())
@@ -271,7 +293,7 @@ def prepare_privacy_reduced_indicators(
     except ValueError:
         port = None
 
-    registrable_domain = extract_registrable_domain(host, multi_part_tlds)
+    registrable_domain = extract_registrable_domain(host)
     is_shortener = host in shorteners or (registrable_domain in shorteners if registrable_domain else False)
 
     # Strip userinfo, query string, fragment, and token-like path segments
@@ -393,12 +415,11 @@ def analyze_url_locally(
     shorteners = set(rules["shorteners"])
     brands = list(rules["protected_brands"])
     official_domains = set(rules["official_domains"])
-    multi_part_tlds = set(rules["multi_part_tlds"])
     path_keywords = set(rules["suspicious_path_keywords"])
     risky_tlds = set(rules["risky_tlds"])
 
     host = parsed.hostname.lower().strip(".")
-    registrable_domain = extract_registrable_domain(host, multi_part_tlds)
+    registrable_domain = extract_registrable_domain(host)
     indicators: list[dict[str, Any]] = []
 
     # 1. IP-based host check (dotted decimal, hex, octal, shorthand, IPv6)
@@ -462,7 +483,22 @@ def analyze_url_locally(
         )
 
     # 5. Subdomain, brand-in-subdomain, and look-alike domain checks
-    labels = [lbl for lbl in host.split(".") if lbl]
+    labels = host.split(".")
+    if ip_host is None and registrable_domain is None:
+        if any(not lbl or not _DNS_LABEL_RE.match(lbl) for lbl in labels) or (
+            "." in host and labels[-1] not in _NON_PUBLIC_TLDS
+        ):
+            indicators.append(
+                {
+                    "id": "invalid_or_public_suffix_host",
+                    "title": "Malformed Hostname or Bare Public Suffix",
+                    "contribution": int(weights["invalid_or_public_suffix_host"]),
+                    "why_it_matters": (
+                        "The URL hostname is either syntactically irregular or resolves only to a bare public suffix "
+                        "rather than a valid registrable domain."
+                    ),
+                }
+            )
     if ip_host is None and registrable_domain:
         is_official = host in official_domains or registrable_domain in official_domains
         subdomain_part = host[: -len(registrable_domain)].rstrip(".")

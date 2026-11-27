@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "score_bounds": {
     "min": 0,
     "max": 100
@@ -111,6 +111,7 @@
       "weight": 20,
       "patterns": [
         "\\b(?:pay|transfer|send|deposit)\\s*(?:the\\s*)?(?:fine|penalty|bail|settlement|clearance\\s*fee|processing\\s*fee|customs\\s*duty|tax)\\b",
+        "\\b(?:pay|transfer)\\s*(?:now\\s*)?(?:to\\s*)?(?:unblock|release|clear|avoid\\s*arrest)\\b",
         "\\b(?:scan\\s*(?:this|the)\\s*qr\\s*(?:code)?\\s*(?:to\\s*)?(?:receive|claim|verify)|enter\\s*(?:your\\s*)?upi\\s*pin\\s*to\\s*(?:receive|claim))\\b",
         "\\b(?:pay\\s*(?:now|immediately)|transfer\\s*(?:now|immediately)|send\\s*(?:via|through)\\s*(?:upi|neft|rtgs|imps|gift\\s*card))\\b"
       ],
@@ -122,7 +123,7 @@
       "title": "Request to Share OTP, PIN, or Password",
       "weight": 24,
       "patterns": [
-        "(?<!do not )(?<!don't )(?<!never )(?<!not to )\\b(?:share|tell|send|forward|give|provide|confirm|dictate)\\s*(?:me\\s*|us\\s*)?(?:your\\s*|the\\s*)?(?:otp|one[- ]time\\s*password|upi\\s*pin|atm\\s*pin|mpin|cvv|password|passcode)\\b",
+        "(?<!do not )(?<!don't )(?<!never )(?<!not to )\\b(?:share|tell|send|forward|give|provide|confirm|dictate|reply\\s*with)\\s*(?:me\\s*|us\\s*)?(?:your\\s*|the\\s*)?(?:otp|one[- ]time\\s*password|upi\\s*pin|atm\\s*pin|mpin|cvv|password|passcode)\\b",
         "(?<!do not )(?<!don't )(?<!never )\\b(?:enter|submit|type)\\s*(?:your\\s*|the\\s*)?(?:otp|pin|cvv|password|mpin)\\b"
       ],
       "negative_patterns": [
@@ -250,7 +251,7 @@
         "\\b(?:credited\\s*(?:to|with)|debited\\s*(?:from|by)|avl\\.?\\s*bal|available\\s*balance|upi\\s*(?:ref|txn|id))\\b",
         "\\b(?:a/c\\s*(?:xx|no\\.?\\s*x+)[0-9x]+|if\\s*not\\s*(?:done\\s*)?by\\s*you)\\b"
       ],
-      "blocked_by": ["arrest_threat", "legal_intimidation", "secrecy", "video_call_pressure", "safe_account", "otp_password_request", "payment_demand", "sensitive_info_request"],
+      "blocked_by": ["impersonation", "arrest_threat", "legal_intimidation", "secrecy", "video_call_pressure", "safe_account", "otp_password_request", "payment_demand", "sensitive_info_request"],
       "explanation": "Matches routine transactional receipt language without credential or payment coercion."
     },
     {
@@ -260,7 +261,7 @@
       "patterns": [
         "\\b(?:out\\s*for\\s*delivery|arriving\\s*today|has\\s*been\\s*delivered|delivery\\s*(?:partner|agent)|track\\s*(?:on|via)\\s*official\\s*app|awb\\s*no)\\b"
       ],
-      "blocked_by": ["arrest_threat", "legal_intimidation", "secrecy", "video_call_pressure", "safe_account", "otp_password_request", "payment_demand", "sensitive_info_request"],
+      "blocked_by": ["impersonation", "arrest_threat", "legal_intimidation", "secrecy", "video_call_pressure", "safe_account", "otp_password_request", "payment_demand", "sensitive_info_request"],
       "explanation": "Matches ordinary parcel status wording without payment demands or intimidation."
     }
   ]

@@ -6,8 +6,11 @@ app = create_app()
 
 
 if __name__ == "__main__":
+    host = app.config["HOST"]
+    port = app.config["PORT"]
+    print(f"CyberShield Awareness running at http://{host}:{port} (Press CTRL+C to quit)", flush=True)
     app.run(
-        host=app.config["HOST"],
-        port=app.config["PORT"],
+        host=host,
+        port=port,
         debug=app.config["DEBUG"],
     )

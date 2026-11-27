@@ -93,8 +93,12 @@ def load_rules_config(rules_path: Path = DEFAULT_RULES_PATH) -> dict[str, Any]:
     }
 
 
+_ZERO_WIDTH_RE = re.compile(r"[\u200b-\u200f\u202a-\u202e\ufeff]")
+
+
 def _normalize_whitespace(text: str) -> str:
-    return re.sub(r"\s+", " ", text).strip()
+    cleaned = _ZERO_WIDTH_RE.sub("", text)
+    return re.sub(r"\s+", " ", cleaned).strip()
 
 
 def _select_category(score: int, categories: list[dict[str, Any]]) -> dict[str, Any]:
@@ -193,7 +197,7 @@ def _build_recommended_actions(
             "Treat 'No known red flags' as advisory only—always verify unexpected requests for money, links, or personal details independently."
         )
 
-    return actions
+    return list(dict.fromkeys(actions))
 
 
 def analyze_message(
@@ -285,8 +289,10 @@ def analyze_message(
     final_score = max(min_score, min(max_score, raw_total))
 
     # Guardrail: an isolated keyword without context cannot exceed Low category
+    guardrail_applied = False
     if matched_ids <= {"mild_urgency_keyword", "isolated_otp_mention"} and final_score > 20:
         final_score = 20
+        guardrail_applied = True
 
     category = _select_category(final_score, config["categories"])
     recommended_actions = _build_recommended_actions(matched_ids, category["id"])
@@ -296,6 +302,14 @@ def analyze_message(
         "char_count": len(cleaned_text),
         "score": final_score,
         "raw_score": raw_total,
+        "score_breakdown": {
+            "indicator_points": raw_indicator_score,
+            "combination_points": combo_score,
+            "benign_offset_points": benign_offset,
+            "raw_total": raw_total,
+            "final_score": final_score,
+            "guardrail_applied": guardrail_applied,
+        },
         "category": {
             "id": category["id"],
             "label": category["label"],

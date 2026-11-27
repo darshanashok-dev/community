@@ -53,5 +53,7 @@ External lookups run **only** when the user explicitly checks the consent checkb
   - Confirmed `DEBUG = False` by default in `config.py` and `.env`, `.env` listed in `.gitignore`, and `SAFE_BROWSING_API_KEY` never exposed in JS, templates, or logs.
   - Confirmed Jinja2 auto-escaping (no `|safe`), zero `innerHTML`/`eval` in JS, strict CSP/COOP/CORP/X-Frame-Options/Referrer-Policy/No-Store headers, `InMemoryRateLimiter` (`429`), and payload caps (`64 KB`, `5000` chars, `2048` chars).
   - Confirmed RDAP SSRF guard blocks non-HTTPS, non-`443` ports, userinfo, private/loopback/link-local/reserved IPs, and submitted URLs are never visited.
+  - Confirmed registrable-domain extraction uses the offline bundled Mozilla Public Suffix List (`publicsuffix2==2.20191221`) with zero external DNS/HTTP suffix lookups.
+  - Confirmed `.venv/bin/pip check` (`No broken requirements found.`) and `.venv/bin/pip-audit --strict` (`No known vulnerabilities found` after upgrading `.venv` `pip` from `26.0.1` to `26.3`).
 - **Audit Scope Note:** This audit targets privacy-first local academic execution and does not constitute formal security or WCAG 2.2 AA certification.
 

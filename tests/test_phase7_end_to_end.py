@@ -139,8 +139,9 @@ def test_evaluation_group_split_prevents_template_leakage():
 
 def test_evaluation_metrics_and_baseline_comparison_on_synthetic_smoke():
     samples_path = PROJECT_ROOT / "evaluation" / "synthetic_smoke_samples.csv"
-    report = evaluate_csv(samples_path, score_threshold=31)
+    report = evaluate_csv(samples_path, score_threshold=31, mode="synthetic-smoke")
 
+    assert report["evaluation_mode"] == "synthetic_smoke_only"
     assert report["total_samples"] == 24
     assert report["dataset_origins"] == {"synthetic_dev": 24}
     assert len(report["rules_sha256"]) == 64

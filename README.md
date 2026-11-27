@@ -17,7 +17,7 @@ The platform helps the general public:
 ## Technology Stack
 
 - **Frontend:** HTML5, CSS3, Vanilla JavaScript (no external CDNs or UI frameworks)
-- **Backend:** Python 3.10+ (tested on 3.14), Flask 3.1.3, python-dotenv 1.2.4, Requests 2.34.2
+- **Backend:** Python 3.10+ (tested on 3.14), Flask 3.1.3, python-dotenv 1.2.4, Requests 2.34.2, publicsuffix2 2.20191221 (offline PSL)
 - **Static Storage:** SQLite (`app/database/content.db`, generated on startup) and JSON (`app/database/*.json`) for rules, lessons, permissions, and quiz questions only
 - **External Integrations (Opt-In Only):** Google Safe Browsing API v5 (`hashes:search`), ICANN RDAP (`rdap.org`)
 
@@ -56,12 +56,13 @@ project/
 │   ├── DATASET_PROTOCOL.md
 │   ├── USABILITY_STUDY_PROTOCOL.md
 │   ├── annotation_template.csv
+│   ├── dataset_validator.py
 │   ├── evaluate_detection.py
 │   ├── split_dataset.py
 │   ├── synthetic_smoke_samples.csv
 │   └── usability_questionnaire_template.csv
 ├── references/README.md
-├── tests/ (test_phase1_app.py .. test_phase7_end_to_end.py)
+├── tests/ (test_phase1_app.py .. test_phase7_end_to_end.py, test_improvements_qa.py)
 ├── config.py
 ├── requirements.txt
 ├── .env.example
@@ -109,14 +110,14 @@ Open `http://127.0.0.1:5000` in your browser. Do not deploy publicly without HTT
 source .venv/bin/activate
 pip check
 pytest -v
-python evaluation/split_dataset.py --input evaluation/synthetic_smoke_samples.csv --out-dir /tmp/eval_splits
-python evaluation/evaluate_detection.py --input evaluation/synthetic_smoke_samples.csv --threshold 31
+python evaluation/split_dataset.py --input evaluation/synthetic_smoke_samples.csv --out-dir /tmp/eval_splits --mode synthetic-smoke
+python evaluation/evaluate_detection.py --input evaluation/synthetic_smoke_samples.csv --mode synthetic-smoke --threshold 31
 ```
 
 ## Verification & Evaluation Status
 
-- **Automated Tests:** `67 passed` (`pytest -v`), plus Playwright Chromium verification of all 10 demonstration steps across mobile (`390x844`), tablet (`768x1024`), and desktop (`1366x768`) viewports with zero console errors or horizontal overflow.
-- **Dependency Check:** `pip check` clean; `pip-audit` reported zero vulnerabilities across runtime packages (`Flask`, `Werkzeug`, `Jinja2`, `requests`, `urllib3`, `certifi`, `python-dotenv`).
+- **Automated Tests:** `86 passed` (`pytest -v`), plus Playwright Chromium verification of all 10 demonstration steps across mobile (`390x844`), tablet (`768x1024`), and desktop (`1366x768`) viewports with zero console errors or horizontal overflow.
+- **Dependency Check:** `pip check` clean (`No broken requirements found.`); `pip-audit --strict` clean (`No known vulnerabilities found` after upgrading `.venv` `pip` to `26.3`).
 - **Pending Human Academic Steps:**
   1. Optional live Google Safe Browsing v5 test after adding `SAFE_BROWSING_API_KEY` to `.env`.
   2. Collecting, redacting, and independently annotating (two annotators) 300+ genuine messages (including 100+ genuine bank/UPI/delivery notifications) using [evaluation/annotation_template.csv](evaluation/annotation_template.csv), then running the frozen held-out evaluation.

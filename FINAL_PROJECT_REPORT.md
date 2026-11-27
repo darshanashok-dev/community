@@ -105,7 +105,7 @@ flowchart TD
 ## 8. Technology Stack
 
 - **Frontend:** HTML5, CSS3, Vanilla JavaScript (zero external CDNs, fonts, or JS frameworks)
-- **Backend:** Python 3.14, Flask 3.1.3, python-dotenv 1.2.4, Requests 2.34.2
+- **Backend:** Python 3.14, Flask 3.1.3, python-dotenv 1.2.4, Requests 2.34.2, publicsuffix2 2.20191221 (offline Mozilla Public Suffix List)
 - **Storage:** SQLite (`app/database/content.db`) + JSON (`app/database/*.json`) for static content only
 - **Testing & Evaluation:** pytest 9.2.0, custom Python evaluation/splitting scripts (`evaluation/`)
 - **External APIs (Opt-In Only):** Google Safe Browsing API v5 (`hashes:search`), ICANN RDAP (`rdap.org`)
@@ -220,11 +220,11 @@ Detailed in [PRIVACY_AND_SECURITY.md](PRIVACY_AND_SECURITY.md) and [SECURITY_AUD
 ## 18. Actual Detection Evaluation Results
 
 - **Genuine 300+ Held-Out Dataset Evaluation:** **PENDING — Genuine dataset evaluation not yet conducted.** (Requires external collection, redaction, and independent two-annotator labelling of 300+ genuine de-identified messages including 100+ genuine benign bank/UPI/delivery notifications.)
-- **Synthetic Development Smoke Verification (`evaluation/synthetic_smoke_samples.csv`, 24 `synthetic_dev` messages only — not a substitute for the 300+ genuine dataset):**
-  - Frozen rules SHA-256: `4144c0418c3dce580c0a61e7220518f387c81b8e10f8f777b61ed0e618ddea32`
-  - **Contextual Rule Engine (`threshold=31`):** `TP=12, FP=0, TN=12, FN=0` | Precision `1.0` | Recall `1.0` | F1 `1.0` | FPR `0.0` | FNR `0.0` | Avg response `1.5224 ms` (`p95=0.92 ms`).
-  - **Keyword-Only Baseline:** `TP=12, FP=9, TN=3, FN=0` | Precision `0.5714` | Recall `1.0` | F1 `0.7273` | FPR `0.75` | FNR `0.0`.
-  - **Template-Grouped 70/30 Split:** `Dev=16`, `Test=8` (zero `template_group_id` leakage), Cohen's kappa `1.0` on synthetic annotations.
+- **Synthetic Development Smoke Verification (`evaluation/synthetic_smoke_samples.csv`, `--mode synthetic-smoke`, 24 `synthetic_dev` messages only — blocked from `genuine-eval` and not a substitute for the 300+ genuine dataset):**
+  - Frozen rules SHA-256: `a74d118faa722a13c2365d83808073a4f365b30883d79bd7499554be3d6e11b1`
+  - **Contextual Rule Engine (`threshold=31`):** `TP=12, FP=0, TN=12, FN=0` | Precision `1.0` | Recall `1.0` | F1 `1.0` | Macro-F1 `1.0` | Weighted-F1 `1.0` | FPR `0.0` | FNR `0.0` | Avg response `0.275 ms` (`p95=0.1489 ms`).
+  - **Keyword-Only Baseline:** `TP=12, FP=9, TN=3, FN=0` | Precision `0.5714` | Recall `1.0` | F1 `0.7273` | Macro-F1 `0.5636` | Weighted-F1 `0.5636` | FPR `0.75` | FNR `0.0`.
+  - **Template-Grouped 70/30 Split:** `Dev=16`, `Test=8` (zero `template_group_id` or duplicate-text leakage), Cohen's kappa `1.0` on synthetic annotations.
 
 ---
 

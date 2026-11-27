@@ -34,8 +34,9 @@ cp .env.example .env
 - **Terms of Service requirements:** Safe Browsing is free strictly for **non-commercial** use. Whenever Safe Browsing results are shown, Google attribution and reliability/accuracy notices are displayed; Google attribution is never attached to local heuristic warnings.
 - **Behaviour without a key:** If `SAFE_BROWSING_API_KEY` is blank, local URL inspection still operates normally and Safe Browsing displays `"Reputation information unavailable"`.
 
-## 3. RDAP Domain Lookup Setup
+## 3. RDAP Domain Lookup & Offline Public Suffix List Setup
 
 - **Endpoint used:** `GET https://rdap.org/domain/<registrable_domain>` (requires no API key).
-- **Privacy rule:** Only the registrable domain (`eTLD+1`, e.g., `example.co.in`) is transmitted. Redirects to authoritative registry RDAP servers are validated for HTTPS port `443` and non-private IPs.
+- **Registrable-domain extraction:** Uses `publicsuffix2==2.20191221` with an embedded offline Mozilla Public Suffix List snapshot (`PublicSuffixList(idna=True)`). No network call is made to determine suffixes, and bare public suffixes (such as `co.uk` or `com.mx`) return `None` rather than triggering an invalid RDAP query. To refresh the PSL snapshot during future maintenance, run `pip install --upgrade publicsuffix2` and re-pin in `requirements.txt`.
+- **Privacy rule:** Only the registrable domain (`eTLD+1`, e.g., `example.co.in`, `example.co.uk`) is transmitted. Redirects to authoritative registry RDAP servers are validated for HTTPS port `443` and non-private IPs.
 - **Database details:** The application uses `app/database/content.db` (SQLite) exclusively for static lessons, quizzes, and Android permission explanations—zero external API keys or user URLs are stored in SQLite.

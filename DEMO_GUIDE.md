@@ -40,3 +40,31 @@ Open `http://127.0.0.1:5000` in a browser (and optionally open Developer Tools -
    - Walk through one or two of the 6 fictional scenario-based lessons and show the official reporting links (`1930`, `cybercrime.gov.in`, `cert-in.org.in`).
 10. **Interactive Quiz (`/learning#quiz`):**
     - Answer the 8 scenario questions (including one intentional wrong answer to demonstrate corrective explanation), submit to view the score and explanations, and show the **Retry Quiz** reset flow.
+
+---
+
+## Likely Viva Questions & Implementation-Grounded Answers
+
+1. **Why was rule-based detection selected instead of machine learning?**
+   - Public awareness requires **explainability**: every warning returned by `app/services/message_analyser.py` lists the exact matched rule, why it matters, and its exact point contribution (`score_breakdown`). Rules require no large proprietary training corpus, execute in ~0.3 ms in memory, and can be audited line-by-line in `app/database/message_rules.json`.
+2. **Why was machine learning not selected for the prototype?**
+   - Training an ML/NLP classifier without at least thousands of representative regional/scam samples risks opaque black-box verdicts (`"scam 87%"`) without teaching users *why* a message is manipulative. ML is documented as a future extension once an ethically sourced corpus exists.
+3. **How does the weighted scoring system work?**
+   - Each of the 13 contextual rules contributes a configured positive weight (e.g., `safe_account` +30, `arrest_threat` +28, `otp_password_request` +24), combination rules (`combo_digital_arrest`, `combo_credential_phishing`, `combo_unofficial_channel_coercion`) add synergy points when high-risk cues co-occur, and benign-context rules subtract small offsets when no coercive signals exist. The sum is bounded to `0–100` (`0–30` *No known red flags*, `31–65` *Some warning signs*, `66–100` *Strong scam signs*) and explicitly presented as an advisory indicator, never a probability.
+4. **How are false positives reduced on genuine banking, UPI, and delivery messages?**
+   - Negative lookbehinds (`(?<!do not )(?<!don't )(?<!never )`) prevent `"Do not share this OTP with anyone"` from triggering `otp_password_request`; doorstep delivery phrasing (`Share OTP ... with delivery agent only when receiving parcel`) is excluded from `otp_password_request`; isolated `"OTP"` (`+5`) and `"urgent"` (`+8`) rules are capped at `<= 20` by the isolated-keyword guardrail; and `benign_protective_otp`, `benign_bank_upi_receipt`, and `benign_delivery_update` offsets offset benign alerts when coercive/impersonation cues are absent.
+5. **How are URLs analysed without visiting them?**
+   - `app/services/url_analyser.py` parses the URL string strictly as text with `urllib.parse.urlsplit`, `ipaddress`, and offline `publicsuffix2` (Mozilla PSL). It never opens sockets, follows redirects, fetches HTML, or expands shortened URLs (`bit.ly` etc. are marked `"Destination not verified"`).
+6. **How does Google Safe Browsing v5 work in this project?**
+   - Only when the user checks `consent_external`, `prepare_privacy_reduced_indicators` strips credentials, query strings, fragments, and token-like path segments, canonicalizes the reduced URL, generates up to 30 host-suffix/path-prefix expressions, hashes them with SHA-256, and sends **only 4-byte base64 hash prefixes** via `GET https://safebrowsing.googleapis.com/v5/hashes:search`. Full 32-byte hashes from the protobuf/JSON response are matched locally, and missing keys/errors display `"Reputation information unavailable"`.
+7. **Why is RDAP used, and what privacy rule applies?**
+   - RDAP (`https://rdap.org/domain/<registrable_domain>`) retrieves contextual domain registration metadata (registrar, registration date, age, status) to help users spot newly registered domains without implying age proves malice or safety. Only the registrable domain (`eTLD+1` extracted offline via `publicsuffix2`) is sent, over SSRF-validated HTTPS port `443`.
+8. **How is user privacy maintained end-to-end?**
+   - Submitted messages and full URLs stay in request memory only and are discarded after rendering; they are never written to SQLite (`content.db` holds static lessons, quizzes, and permissions only), never written to logs (`app/__init__.py` logs only request ID, method, `request.path`, status, and timing), and never echoed back into form HTML.
+9. **Why can permissions alone not establish that an Android app is malware?**
+   - Sensitive permissions (Accessibility, Notification access, Display over apps, Install unknown apps) have genuine legitimate uses such as screen readers, smartwatch companions, and chat bubbles. Context—such as whether an APK was sideloaded via chat—matters, so `/android-guide` strictly provides educational guidance and never classifies apps or scans APKs.
+10. **How are detection metrics calculated and validated?**
+    - `evaluation/split_dataset.py` enforces two-annotator labelling, Cohen's kappa, and a ~70/30 `template_group_id`-grouped split so duplicate templates cannot cross into the test set. `evaluation/evaluate_detection.py` blocks synthetic or `<300` genuine rows in default `--mode genuine-eval` and computes Precision, Recall, F1, Macro-F1, Weighted-F1, FPR, FNR, Confusion Matrix, and latency alongside a naive keyword-only baseline.
+11. **What are the actual documented limitations?**
+    - English-only prototype (Hindi/Kannada/code-mixed future work); advisory rules can miss novel scams (`"No known red flags"` never proves safety); shortened URLs remain unverified; live Safe Browsing requires a user API key and network access; and genuine 300+ dataset evaluation plus the 20–30 participant usability study remain pending human collection/execution.
+

@@ -27,6 +27,16 @@
     });
   }
 
+  const form = document.getElementById("url-analyser-form");
+  const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+
+  if (form && submitBtn) {
+    form.addEventListener("submit", function () {
+      form.setAttribute("aria-busy", "true");
+      submitBtn.textContent = "Inspecting URL...";
+    });
+  }
+
   sampleButtons.forEach(function (btn) {
     btn.addEventListener("click", function () {
       const sampleUrl = btn.getAttribute("data-url");

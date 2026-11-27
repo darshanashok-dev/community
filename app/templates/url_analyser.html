@@ -8,7 +8,7 @@
     title="Text-Only URL Analyser",
     subtitle="Examine suspicious links for structural deception without ever opening, visiting, or fetching the destination.",
     eyebrow="Module C — URL Inspection",
-    status_badge={"kind": "calm", "label": "Phase 3 — Active (Local + Opt-In Reputation)"}
+    status_badge={"kind": "calm", "label": "Text-Only Analysis + Opt-In Reputation"}
   ) }}
 
   <section class="section">
@@ -118,6 +118,13 @@
               {% if local.privacy_reduction.stripped_sensitive_parts %}
                 <p class="card__text">
                   <strong>Privacy reduction applied:</strong> Credentials, query strings, fragments, and token-like path segments were stripped before preparing external indicators.
+                </p>
+              {% endif %}
+              {% if local.privacy_reduction.reduced_url_preview %}
+                <p class="card__text">
+                  <strong>Privacy-reduced Safe Browsing basis:</strong>
+                  <span class="mono-text">{{ local.privacy_reduction.reduced_url_preview }}</span>
+                  ({{ local.privacy_reduction.hash_prefix_count }} unique 4-byte SHA-256 prefix{{ '' if local.privacy_reduction.hash_prefix_count == 1 else 'es' }} generated).
                 </p>
               {% endif %}
 

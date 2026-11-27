@@ -20,8 +20,8 @@
 ## 2. Dependency Review
 
 - Checked via `.venv/bin/pip check` (`No broken requirements found.`).
-- Runtime dependencies pinned in `requirements.txt`: `Flask==3.1.3`, `python-dotenv==1.2.4`, `requests==2.34.2`, `pytest==9.2.0` (supporting libs: `Werkzeug==3.1.9`, `Jinja2==3.1.6`, `urllib3==2.8.0`, `certifi==2026.11.20`).
-- Offline environment note: Online CVE database polling (e.g., `pip-audit` against PyPI/OSV) was not executed offline; pinned versions are current releases installed during development.
+- Runtime dependencies pinned in `requirements.txt`: `Flask==3.1.3`, `publicsuffix2==2.20191221`, `python-dotenv==1.2.4`, `requests==2.34.2`, `pytest==9.2.0` (supporting libs: `Werkzeug==3.1.9`, `Jinja2==3.1.6`, `urllib3==2.8.0`, `certifi==2026.11.20`).
+- Online vulnerability scan via `.venv/bin/pip-audit --strict`: initial scan flagged 8 known advisories in `pip==26.0.1`; `pip` was upgraded in `.venv` to `26.3`, and a fresh `.venv/bin/pip-audit --strict` run completed with **`No known vulnerabilities found`**.
 
 ## 3. Accessibility Review (Targeting WCAG 2.2 AA)
 

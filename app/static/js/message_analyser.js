@@ -53,6 +53,16 @@
       "Your package AWB No 90887766 is out for delivery today. Our delivery partner will reach you soon. Track on official app."
   };
 
+  const form = document.getElementById("message-analyser-form");
+  const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+
+  if (form && submitBtn) {
+    form.addEventListener("submit", function () {
+      form.setAttribute("aria-busy", "true");
+      submitBtn.textContent = "Analysing Message...";
+    });
+  }
+
   sampleButtons.forEach(function (btn) {
     btn.addEventListener("click", function () {
       const key = btn.getAttribute("data-sample");

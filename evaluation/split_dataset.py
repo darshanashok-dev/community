@@ -1,7 +1,7 @@
 """Source/template-grouped ~70/30 stratified dataset splitter & annotator agreement tool.
 
-Ensures duplicate or near-duplicate message templates (sharing `template_group_id`)
-never cross the boundary between the development and held-out test sets.
+Ensures duplicate or near-duplicate message templates (sharing `template_group_id`
+or identical normalized text) never cross between dev and held-out test sets.
 """
 
 from __future__ import annotations
@@ -9,9 +9,17 @@ from __future__ import annotations
 import argparse
 import csv
 import random
+import re
+import sys
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from evaluation.dataset_validator import DatasetValidationError, validate_dataset_rows  # noqa: E402
 
 
 def compute_cohens_kappa(rows: list[dict[str, str]]) -> dict[str, Any]:
@@ -43,6 +51,10 @@ def compute_cohens_kappa(rows: list[dict[str, str]]) -> dict[str, Any]:
     }
 
 
+def _norm_text(text: str) -> str:
+    return re.sub(r"\s+", " ", (text or "").strip().lower())
+
+
 def group_stratified_split(
     rows: list[dict[str, str]],
     dev_ratio: float = 0.70,
@@ -68,7 +80,6 @@ def group_stratified_split(
         total_in_class = sum(len(members) for _, members in group_items)
         target_dev = round(total_in_class * dev_ratio)
 
-        # Ensure at least one group stays in test when >= 2 groups exist
         current_dev = 0
         for idx, (_gid, members) in enumerate(group_items):
             remaining_groups = len(group_items) - idx
@@ -87,39 +98,88 @@ def group_stratified_split(
     return dev_rows, test_rows
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Group-aware 70/30 stratified dataset splitter.")
-    parser.add_argument("--input", required=True, type=Path, help="Input labelled CSV path.")
-    parser.add_argument("--out-dir", required=True, type=Path, help="Output directory for dev.csv and test.csv.")
-    parser.add_argument("--dev-ratio", type=float, default=0.70, help="Target dev fraction (default 0.70).")
-    parser.add_argument("--seed", type=int, default=42, help="Deterministic shuffle seed.")
-    args = parser.parse_args()
-
-    with args.input.open("r", encoding="utf-8", newline="") as handle:
+def split_and_validate(
+    input_path: Path,
+    out_dir: Path,
+    mode: str = "genuine-eval",
+    dev_ratio: float = 0.70,
+    seed: int = 42,
+) -> dict[str, Any]:
+    """Validate dataset, perform group-stratified split, and write dev.csv & test.csv."""
+    with input_path.open("r", encoding="utf-8", newline="") as handle:
         reader = csv.DictReader(handle)
-        fieldnames = reader.fieldnames or []
+        fieldnames = list(reader.fieldnames or [])
         rows = list(reader)
 
+    summary = validate_dataset_rows(rows, fieldnames=fieldnames, mode=mode)
     agreement = compute_cohens_kappa(rows)
-    dev_rows, test_rows = group_stratified_split(rows, dev_ratio=args.dev_ratio, seed=args.seed)
+    dev_rows, test_rows = group_stratified_split(rows, dev_ratio=dev_ratio, seed=seed)
 
-    # Verify zero template-group leakage
-    dev_groups = {r["template_group_id"] for r in dev_rows if r.get("template_group_id")}
-    test_groups = {r["template_group_id"] for r in test_rows if r.get("template_group_id")}
-    overlap = dev_groups & test_groups
-    if overlap:
-        raise RuntimeError(f"Template group leakage detected: {sorted(overlap)}")
+    # Verify zero template-group or exact-text leakage
+    dev_groups = {r["template_group_id"].strip() for r in dev_rows}
+    test_groups = {r["template_group_id"].strip() for r in test_rows}
+    if dev_groups & test_groups:
+        raise DatasetValidationError(
+            f"Template group leakage detected: {sorted(dev_groups & test_groups)}"
+        )
 
-    args.out_dir.mkdir(parents=True, exist_ok=True)
+    dev_texts = {_norm_text(r["redacted_text"]) for r in dev_rows}
+    test_texts = {_norm_text(r["redacted_text"]) for r in test_rows}
+    if dev_texts & test_texts:
+        raise DatasetValidationError(
+            "Duplicate redacted_text crossed the dev/test boundary. Assign shared template_group_id values."
+        )
+
+    out_dir.mkdir(parents=True, exist_ok=True)
     for name, subset in [("dev.csv", dev_rows), ("test.csv", test_rows)]:
-        out_path = args.out_dir / name
+        out_path = out_dir / name
         with out_path.open("w", encoding="utf-8", newline="") as handle:
             writer = csv.DictWriter(handle, fieldnames=fieldnames)
             writer.writeheader()
             writer.writerows(subset)
 
-    print(f"Total rows: {len(rows)} | Dev: {len(dev_rows)} | Test: {len(test_rows)}")
-    print(f"Inter-annotator agreement: {agreement}")
+    return {
+        "mode": summary.mode,
+        "total_rows": summary.total_rows,
+        "dev_rows": len(dev_rows),
+        "test_rows": len(test_rows),
+        "class_counts": summary.class_counts,
+        "inter_annotator_agreement": agreement,
+    }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Group-aware 70/30 stratified dataset splitter.")
+    parser.add_argument("--input", required=True, type=Path, help="Input labelled CSV path.")
+    parser.add_argument("--out-dir", required=True, type=Path, help="Output directory for dev.csv and test.csv.")
+    parser.add_argument(
+        "--mode",
+        choices=["genuine-eval", "synthetic-smoke"],
+        default="genuine-eval",
+        help="Validation mode: genuine-eval enforces 300+ genuine messages; synthetic-smoke allows synthetic_dev only.",
+    )
+    parser.add_argument("--dev-ratio", type=float, default=0.70, help="Target dev fraction (default 0.70).")
+    parser.add_argument("--seed", type=int, default=42, help="Deterministic shuffle seed.")
+    args = parser.parse_args()
+
+    try:
+        result = split_and_validate(
+            input_path=args.input,
+            out_dir=args.out_dir,
+            mode=args.mode,
+            dev_ratio=args.dev_ratio,
+            seed=args.seed,
+        )
+    except DatasetValidationError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        sys.exit(2)
+
+    print(
+        f"Mode: {result['mode']} | Total: {result['total_rows']} "
+        f"| Dev: {result['dev_rows']} | Test: {result['test_rows']}"
+    )
+    print(f"Class counts: {result['class_counts']}")
+    print(f"Inter-annotator agreement: {result['inter_annotator_agreement']}")
 
 
 if __name__ == "__main__":

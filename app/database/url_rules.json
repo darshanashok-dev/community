@@ -202,6 +202,7 @@
     "non_standard_port": 16,
     "unusual_length": 12,
     "risky_tld": 14,
-    "plain_http_with_sensitive_path": 14
+    "plain_http_with_sensitive_path": 14,
+    "invalid_or_public_suffix_host": 24
   }
 }

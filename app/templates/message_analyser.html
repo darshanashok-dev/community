@@ -8,7 +8,7 @@
     title="Phishing & Digital-Arrest Message Analyser",
     subtitle="Inspect pasted SMS, WhatsApp, or email text for contextual phishing and coercion indicators.",
     eyebrow="Module B — Message Analysis",
-    status_badge={"kind": "calm", "label": "Phase 2 — Active (In-Memory Rule Engine)"}
+    status_badge={"kind": "calm", "label": "In-Memory Contextual Rule Engine"}
   ) }}
 
   <section class="section">
@@ -39,6 +39,23 @@
             </div>
 
             <p class="result-panel__summary">{{ result.category.summary }}</p>
+
+            {% if result.score_breakdown %}
+              <dl class="meta-grid">
+                <div>
+                  <dt>Indicator Points</dt>
+                  <dd>+{{ result.score_breakdown.indicator_points }} pts</dd>
+                </div>
+                <div>
+                  <dt>Context Combinations</dt>
+                  <dd>+{{ result.score_breakdown.combination_points }} pts</dd>
+                </div>
+                <div>
+                  <dt>Benign Context Offset</dt>
+                  <dd>{{ result.score_breakdown.benign_offset_points }} pts (Final: {{ result.score }} / 100)</dd>
+                </div>
+              </dl>
+            {% endif %}
 
             <div class="banner banner--info" role="note">
               <strong class="banner__title">Advisory &amp; Privacy Notice</strong>

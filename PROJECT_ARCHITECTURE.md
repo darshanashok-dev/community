@@ -43,7 +43,7 @@ flowchart TD
   - `analyzer.py`: `/message-analyser`, `/api/analyze-message`, `/url-analyser`, `/api/analyze-url`.
 - **`app/services/`**:
   - `message_analyser.py`: Contextual weighted rule engine combining indicator rules, combination bonuses, and benign-context false-positive offsets.
-  - `url_analyser.py`: Text-only structural URL parser, canonicalizer, Safe Browsing expression generator, and privacy-reduction sanitizer.
+  - `url_analyser.py`: Text-only structural URL parser, canonicalizer, offline Mozilla PSL registrable-domain extractor (`publicsuffix2`), Safe Browsing expression generator, and privacy-reduction sanitizer.
   - `reputation_client.py`: Safe Browsing v5 binary protobuf/JSON decoder and SSRF-guarded registrable-domain RDAP client.
   - `digital_arrest_service.py`: Stateless call-checklist evaluator.
   - `learning_service.py`: Stateless quiz grader and educational Android permission helper.
