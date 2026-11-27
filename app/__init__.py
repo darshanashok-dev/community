@@ -85,7 +85,7 @@ def create_app(config_class: type[Config] = Config) -> Flask:
         return {
             "app_name": app.config["APP_NAME"],
             "project_title": app.config["PROJECT_TITLE"],
-            "current_phase": 2,
+            "current_phase": 3,
         }
 
     @app.errorhandler(404)

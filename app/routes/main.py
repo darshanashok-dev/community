@@ -38,4 +38,4 @@ def learning():
 @main_bp.get("/health")
 def health():
     """Lightweight health check endpoint for local verification."""
-    return jsonify({"status": "ok", "phase": 2})
+    return jsonify({"status": "ok", "phase": 3})

@@ -8,22 +8,184 @@
     title="Text-Only URL Analyser",
     subtitle="Examine suspicious links for structural deception without ever opening, visiting, or fetching the destination.",
     eyebrow="Module C — URL Inspection",
-    status_badge={"kind": "info", "label": "Phase 3 — Under Development"}
+    status_badge={"kind": "calm", "label": "Phase 3 — Active (Local + Opt-In Reputation)"}
   ) }}
 
   <section class="section">
     <div class="container layout-split">
       <div class="layout-split__main">
-        {{ status_banner(
-          kind="info",
-          title="URL Inspection & External Reputation Scheduled for Phase 3",
-          message="Local URL parsing, Google Safe Browsing API v5 four-byte SHA-256 hash-prefix checks, and registrable-domain RDAP lookups will be implemented in Phase 3. No fake reputation results are displayed here."
-        ) }}
+        {% if error_message %}
+          {{ status_banner(
+            kind="urgent",
+            title="URL Input Notice",
+            message=error_message,
+            role="alert"
+          ) }}
+        {% endif %}
 
-        <form class="panel-form" aria-describedby="url-dev-note">
+        {% if analysis %}
+          {% set local = analysis.local_analysis %}
+          {% set ext = analysis.external_reputation %}
+
+          <section class="result-panel" id="url-analysis-result" aria-labelledby="url-local-heading">
+            <div class="result-panel__header">
+              <div>
+                <span class="eyebrow">1. Local Structural Analysis (In-Memory Text Only)</span>
+                <h2 id="url-local-heading" class="result-panel__title">
+                  Local Risk Score: {{ local.score }} / 100 —
+                  <span class="badge badge--{{ local.category.badge_kind }}">{{ local.category.label }}</span>
+                </h2>
+              </div>
+              <div class="score-meter" aria-hidden="true">
+                <div class="score-meter__fill score-meter__fill--{{ local.category.badge_kind }}" data-score="{{ local.score }}"></div>
+              </div>
+            </div>
+
+            <p class="result-panel__summary">{{ local.category.summary }}</p>
+
+            <dl class="meta-grid">
+              <div>
+                <dt>Inspected Host</dt>
+                <dd class="mono-text">{{ local.hostname }}</dd>
+              </div>
+              <div>
+                <dt>Registrable Domain</dt>
+                <dd class="mono-text">{{ local.registrable_domain or "Not applicable / non-public host" }}</dd>
+              </div>
+              <div>
+                <dt>Handling Status</dt>
+                <dd>{{ local.destination_status }}</dd>
+              </div>
+            </dl>
+
+            <div class="banner banner--info" role="note">
+              <strong class="banner__title">Advisory &amp; No-Visit Guarantee</strong>
+              <p class="banner__text">
+                {{ local.advisory_note }} The submitted URL ({{ local.url_length }} characters) was discarded after inspection.
+              </p>
+            </div>
+
+            <div class="result-block">
+              <h3 class="result-block__title">Matched Local Structural Indicators</h3>
+              {% if local.matched_indicators %}
+                <ul class="indicator-list">
+                  {% for item in local.matched_indicators %}
+                    <li class="indicator-item">
+                      <div class="indicator-item__head">
+                        <strong class="indicator-item__title">{{ item.title }}</strong>
+                        <span class="badge badge--caution">+{{ item.contribution }} pts</span>
+                      </div>
+                      <p class="indicator-item__text">{{ item.why_it_matters }}</p>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <p class="card__text">
+                  No local structural red flags matched. Remember that an ordinary-looking domain can still be deceptive or newly abused.
+                </p>
+              {% endif %}
+            </div>
+
+            <div class="result-block">
+              <h3 class="result-block__title">Recommended Actions</h3>
+              <ul class="plain-list">
+                {% for action in local.recommended_actions %}
+                  <li>{{ action }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </section>
+
+          <section class="result-panel" id="external-reputation-result" aria-labelledby="url-external-heading">
+            <div>
+              <span class="eyebrow">2. External Reputation &amp; Domain Context (Separate from Local Score)</span>
+              <h2 id="url-external-heading" class="result-panel__title">
+                {% if ext.consent_granted %}
+                  Opt-In External Check Results
+                {% else %}
+                  External Checks Not Run (No Consent Given)
+                {% endif %}
+              </h2>
+            </div>
+
+            {% if not ext.consent_granted %}
+              {{ status_banner(
+                kind="info",
+                title="No External Lookup Performed",
+                message="You did not check the external reputation consent box, so zero data left this server."
+              ) }}
+            {% else %}
+              {% if local.privacy_reduction.stripped_sensitive_parts %}
+                <p class="card__text">
+                  <strong>Privacy reduction applied:</strong> Credentials, query strings, fragments, and token-like path segments were stripped before preparing external indicators.
+                </p>
+              {% endif %}
+
+              <div class="grid grid--2">
+                <article class="card">
+                  <div class="indicator-item__head">
+                    <h3 class="card__title">Google Safe Browsing v5</h3>
+                    {% if ext.safe_browsing.status == 'matched' %}
+                      <span class="badge badge--urgent">Threat Listed</span>
+                    {% elif ext.safe_browsing.status == 'not_listed' %}
+                      <span class="badge badge--calm">Not Listed</span>
+                    {% else %}
+                      <span class="badge badge--caution">Unavailable / Skipped</span>
+                    {% endif %}
+                  </div>
+                  <p class="card__text"><strong>{{ ext.safe_browsing.display_status }}</strong></p>
+                  <p class="card__text">{{ ext.safe_browsing.reason }}</p>
+                  {% if ext.safe_browsing.matches %}
+                    <ul class="plain-list">
+                      {% for match in ext.safe_browsing.matches %}
+                        <li>Threat type: <strong>{{ match.threat_type }}</strong></li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                  {% if ext.safe_browsing.attribution %}
+                    <p class="form-hint">{{ ext.safe_browsing.attribution }}</p>
+                  {% endif %}
+                </article>
+
+                <article class="card">
+                  <div class="indicator-item__head">
+                    <h3 class="card__title">RDAP Domain Context</h3>
+                    {% if ext.rdap.status == 'ok' %}
+                      <span class="badge badge--info">Context Retrieved</span>
+                    {% else %}
+                      <span class="badge badge--caution">Unavailable / Skipped</span>
+                    {% endif %}
+                  </div>
+                  <p class="card__text"><strong>{{ ext.rdap.display_status }}</strong></p>
+                  {% if ext.rdap.status == 'ok' %}
+                    <ul class="plain-list">
+                      <li>Domain queried: <span class="mono-text">{{ ext.rdap.domain }}</span></li>
+                      <li>Registrar: {{ ext.rdap.registrar or "Not disclosed" }}</li>
+                      <li>Registered: {{ ext.rdap.registration_date or "Not disclosed" }}</li>
+                      {% if ext.rdap.age_days is not none %}
+                        <li>
+                          Estimated age: {{ ext.rdap.age_days }} days
+                          {% if ext.rdap.recently_registered %}
+                            <span class="badge badge--caution">Recently registered (&lt; 90 days)</span>
+                          {% endif %}
+                        </li>
+                      {% endif %}
+                      <li>Expires: {{ ext.rdap.expiration_date or "Not disclosed" }}</li>
+                    </ul>
+                    <p class="form-hint">{{ ext.rdap.contextual_note }}</p>
+                  {% else %}
+                    <p class="card__text">{{ ext.rdap.reason }}</p>
+                  {% endif %}
+                </article>
+              </div>
+            {% endif %}
+          </section>
+        {% endif %}
+
+        <form class="panel-form" method="post" action="{{ url_for('analyzer.url_analyser') }}" id="url-analyser-form" novalidate>
           <div class="form-group">
             <label class="form-label" for="url-input">
-              URL to Inspect as Text (maximum {{ max_url_length }} characters in Phase 3)
+              HTTP or HTTPS URL to Inspect as Text (maximum {{ max_url_length }} characters)
             </label>
             <input
               type="text"
@@ -31,28 +193,42 @@
               id="url-input"
               name="url"
               maxlength="{{ max_url_length }}"
-              placeholder="https://example.com/verify (inspection enabled in Phase 3)"
-              disabled
-              aria-disabled="true"
+              required
+              placeholder="https://example.com/path"
             >
-            <p class="form-hint" id="url-dev-note">
-              Only HTTP/HTTPS URL text will be parsed locally. Shortened links are never expanded automatically and will be labelled "destination not verified".
+            <p class="form-hint">
+              Submitted links are parsed purely as text and are never visited, fetched, or expanded.
             </p>
           </div>
 
-          <fieldset class="form-fieldset" disabled aria-disabled="true">
-            <legend class="form-legend">External Reputation Opt-In (Phase 3)</legend>
+          <fieldset class="form-fieldset">
+            <legend class="form-legend">Optional External Reputation Check (Explicit Consent Required)</legend>
             <label class="checkbox-label">
-              <input type="checkbox" name="consent_external" disabled>
+              <input type="checkbox" name="consent_external" id="consent-external" {% if consent_external %}checked{% endif %}>
               <span>
-                I explicitly consent to sending privacy-reduced indicators (4-byte SHA-256 hash prefixes to Google Safe Browsing v5 and registrable domain only to RDAP). Credentials, query values, and fragments are stripped first.
+                I explicitly consent to sending privacy-reduced indicators (4-byte SHA-256 hash prefixes to Google Safe Browsing API v5 and registrable domain only to RDAP). Credentials, query strings, fragments, and token-like path segments are removed first.
               </span>
             </label>
           </fieldset>
 
-          <div class="form-actions">
-            <button type="button" class="btn btn--primary" disabled aria-disabled="true">
-              Inspect URL (Available in Phase 3)
+          <div class="form-actions form-actions--wrap">
+            <button type="submit" class="btn btn--primary">Inspect URL</button>
+            <button type="button" class="btn btn--quiet" id="clear-url-btn">Clear</button>
+          </div>
+
+          <div class="sample-bar" aria-label="Fictional demonstration URLs">
+            <span class="sample-bar__label">Try a fictional URL:</span>
+            <button type="button" class="btn btn--quiet btn--sm url-sample-btn" data-url="http://sbi.co.in.kyc-verify-update.xyz/login/9f8e7d6c5b4a3210fedcba9876543210?otp=1234#top">
+              Subdomain + Token URL
+            </button>
+            <button type="button" class="btn btn--quiet btn--sm url-sample-btn" data-url="http://192.0.2.45:8080/update/bank-app.apk">
+              IP Host + APK Link
+            </button>
+            <button type="button" class="btn btn--quiet btn--sm url-sample-btn" data-url="https://bit.ly/example-short-code">
+              Shortened URL
+            </button>
+            <button type="button" class="btn btn--quiet btn--sm url-sample-btn" data-url="https://cybercrime.gov.in/">
+              Official Portal URL
             </button>
           </div>
         </form>
@@ -63,25 +239,25 @@
           title="URL Safety & Privacy Rules",
           items=[
             "Submitted URLs are never opened, visited, or fetched by the server.",
-            "Redirects are never followed and URL shorteners are never expanded.",
+            "Redirects on submitted URLs are never followed and shorteners are never expanded.",
             "Full submitted URLs are never stored in logs or databases.",
-            "Unavailable external services are always reported as 'Reputation information unavailable'—never as 'clean'."
+            "External checks require opt-in; unavailable services always show 'Reputation information unavailable', never 'clean'."
           ]
         ) }}
 
         <div class="card">
-          <h2 class="card__title">Planned Local Structural Checks</h2>
-          <ul class="plain-list">
-            <li>IP-address hosts instead of domain names</li>
-            <li>Misleading subdomains and brand look-alikes</li>
-            <li>Punycode (IDN) homograph indicators</li>
-            <li>Suspicious paths, obfuscated encoding, and excessive length</li>
-            <li>Known URL shorteners (labelled unverified)</li>
-          </ul>
+          <h2 class="card__title">Local Checks vs. External Context</h2>
+          <p class="card__text">
+            Local inspection evaluates structural cues (IP hosts, punycode, look-alike domains, misleading subdomains, suspicious paths, shorteners).
+          </p>
+          <p class="card__text">
+            External opt-in checks query Safe Browsing v5 using 4-byte SHA-256 prefixes and RDAP using the registrable domain only.
+          </p>
         </div>
       </aside>
     </div>
   </section>
 
   {{ emergency_strip() }}
+  <script src="{{ url_for('static', filename='js/url_analyser.js') }}" defer></script>
 {% endblock %}
