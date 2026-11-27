@@ -38,15 +38,24 @@ class Config:
     DEBUG = _as_bool(os.environ.get("FLASK_DEBUG"), default=False)
     TESTING = False
 
+    # Secure cookie defaults
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = "Lax"
+    SESSION_COOKIE_SECURE = _as_bool(os.environ.get("SESSION_COOKIE_SECURE"), default=False)
+
     HOST = os.environ.get("FLASK_HOST", "127.0.0.1")
     PORT = _as_int(os.environ.get("FLASK_PORT"), default=5000)
 
-    # Privacy & input constraints
+    # Privacy, payload & rate-limit constraints
     MAX_CONTENT_LENGTH = 64 * 1024  # 64 KB cap on HTTP request payloads
     MAX_MESSAGE_LENGTH = _as_int(os.environ.get("MAX_MESSAGE_LENGTH"), default=5000)
     MAX_URL_LENGTH = _as_int(os.environ.get("MAX_URL_LENGTH"), default=2048)
+    RATE_LIMIT_ENABLED = _as_bool(os.environ.get("RATE_LIMIT_ENABLED"), default=True)
+    RATE_LIMIT_REQUESTS_PER_MINUTE = _as_int(
+        os.environ.get("RATE_LIMIT_REQUESTS_PER_MINUTE"), default=60
+    )
 
-    # External integration settings (activated in Phase 3)
+    # External integration settings
     SAFE_BROWSING_API_KEY = os.environ.get("SAFE_BROWSING_API_KEY", "").strip()
     EXTERNAL_API_TIMEOUT_SECONDS = _as_int(
         os.environ.get("EXTERNAL_API_TIMEOUT_SECONDS"), default=5
@@ -63,3 +72,4 @@ class TestingConfig(Config):
     TESTING = True
     DEBUG = False
     SECRET_KEY = "test-only-secret-key-not-for-production"
+    RATE_LIMIT_ENABLED = False

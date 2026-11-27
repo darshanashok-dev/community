@@ -24,7 +24,7 @@
         {% endif %}
 
         {% if result %}
-          <section class="result-panel" id="analysis-result" aria-labelledby="result-heading">
+          <section class="result-panel" id="analysis-result" aria-labelledby="result-heading" aria-live="polite">
             <div class="result-panel__header">
               <div>
                 <span class="eyebrow">Advisory Analysis Result ({{ result.channel | upper }})</span>

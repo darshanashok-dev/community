@@ -110,7 +110,7 @@
         </div>
 
         {% if checklist_result %}
-          <section class="result-panel" id="checklist-result" aria-labelledby="checklist-result-heading">
+          <section class="result-panel" id="checklist-result" aria-labelledby="checklist-result-heading" aria-live="polite">
             <div class="result-panel__header">
               <div>
                 <span class="eyebrow">Checklist Advisory ({{ checklist_result.selected_count }} sign{{ '' if checklist_result.selected_count == 1 else 's' }} selected)</span>

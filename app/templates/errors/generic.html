@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from "components.html" import page_header %}
+
+{% block title %}{{ error_title }}{% endblock %}
+
+{% block content %}
+  {{ page_header(
+    title=error_title,
+    subtitle=error_message,
+    eyebrow="Service Notice"
+  ) }}
+
+  <section class="section">
+    <div class="container">
+      <div class="card card--narrow">
+        <p class="card__text">
+          No submitted message or URL was saved. Please check your input and try again, or return to the home page.
+        </p>
+        <div class="card__actions">
+          <a class="btn btn--primary" href="{{ url_for('main.home') }}">Return to Home</a>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

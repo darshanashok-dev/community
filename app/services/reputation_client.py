@@ -311,6 +311,14 @@ def _is_public_https_rdap_url(url: str) -> bool:
     parsed = urlsplit(url)
     if parsed.scheme.lower() != "https" or not parsed.hostname:
         return False
+    if parsed.username is not None or parsed.password is not None:
+        return False
+    try:
+        port = parsed.port
+    except ValueError:
+        return False
+    if port not in (None, 443):
+        return False
     host = parsed.hostname.lower()
     if host in {"localhost"} or host.endswith((".local", ".internal", ".invalid")):
         return False

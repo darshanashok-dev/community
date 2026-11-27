@@ -2,19 +2,19 @@
 
 A locally runnable, privacy-conscious Flask web application developed as an academic community project (RNS Institute of Technology, Dept. of CSE).
 
-## Current Status: Phase 5 — Android Permissions, Lessons & Interactive Quizzes
+## Current Status: Phase 6 — Security, Privacy & Complete Integration
 
-Implemented through Phase 5:
-- Modular Flask application factory (`app/`) and environment-based configuration (`config.py`)
-- Security headers, `DEBUG=False` default, and privacy-aware request logging
-- Accessible, responsive HTML5/CSS3/Vanilla JS frontend covering all planned pages:
+Implemented through Phase 6:
+- Modular Flask application factory (`app/`) with `DEBUG=False` default, security headers (`CSP`, `COOP`, `CORP`, `X-Frame-Options`, `Referrer-Policy`, `Cache-Control: no-store`), privacy-aware logging, generic error handlers (`400`, `404`, `405`, `413`, `429`, `500`), and salted in-memory rate limiting
+- All functional modules integrated end-to-end:
   - Home (`/`)
   - Message Analyser (`/message-analyser` and `POST /api/analyze-message`)
   - URL Analyser (`/url-analyser` and `POST /api/analyze-url`)
   - Digital-Arrest Awareness (`/digital-arrest` and `POST /api/digital-arrest-checklist`)
   - After-Scam Assistance (`/after-scam`)
-  - Android Permission Guide (`/android-guide`) — detailed explanations of Accessibility, Notification access, Display over other apps, and Install unknown apps, plus context review helper (no APK scanning)
-  - Lessons & Official Reporting (`/learning` and `POST /api/quiz/submit`) — 6 short scenario-based lessons, 8-question interactive quiz with explanations/scoring/retry, backed by static SQLite/JSON storage (`app/database/content.db`)
+  - Android Permission Guide (`/android-guide`)
+  - Lessons & Official Reporting (`/learning` and `POST /api/quiz/submit`)
+- Phase 6 audit documented in [SECURITY_AUDIT_PHASE6.md](SECURITY_AUDIT_PHASE6.md)
 
 ## Prerequisites
 
