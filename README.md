@@ -17,11 +17,11 @@ The platform helps the general public:
 ## Technology Stack
 
 - **Frontend:** HTML5, CSS3, Vanilla JavaScript (no external CDNs or UI frameworks)
-- **Backend:** Python 3.10+, Flask 3.1.3
-- **Static Storage:** SQLite (`app/database/content.db`) and JSON (`app/database/*.json`) for rules, lessons, permissions, and quiz questions only
+- **Backend:** Python 3.10+ (tested on 3.14), Flask 3.1.3, python-dotenv 1.2.4, Requests 2.34.2
+- **Static Storage:** SQLite (`app/database/content.db`, generated on startup) and JSON (`app/database/*.json`) for rules, lessons, permissions, and quiz questions only
 - **External Integrations (Opt-In Only):** Google Safe Browsing API v5 (`hashes:search`), ICANN RDAP (`rdap.org`)
 
-## Folder Structure
+## Repository Structure
 
 ```text
 project/
@@ -50,12 +50,8 @@ project/
 │   ├── static/
 │   │   ├── css/styles.css
 │   │   ├── images/shield.svg
-│   │   └── js/
-│   └── templates/
-│       ├── base.html
-│       ├── components.html
-│       ├── errors/
-│       └── *.html
+│   │   └── js/ (after_scam.js, learning.js, main.js, message_analyser.js, url_analyser.js)
+│   └── templates/ (base.html, components.html, errors/, and module pages)
 ├── evaluation/
 │   ├── DATASET_PROTOCOL.md
 │   ├── USABILITY_STUDY_PROTOCOL.md
@@ -64,18 +60,21 @@ project/
 │   ├── split_dataset.py
 │   ├── synthetic_smoke_samples.csv
 │   └── usability_questionnaire_template.csv
-├── references/
-├── tests/
+├── references/README.md
+├── tests/ (test_phase1_app.py .. test_phase7_end_to_end.py)
 ├── config.py
 ├── requirements.txt
 ├── .env.example
+├── .gitignore
 ├── run.py
-├── PROJECT_ARCHITECTURE.md
-├── PRIVACY_AND_SECURITY.md
-├── TESTING_AND_EVALUATION.md
 ├── API_CONFIGURATION.md
 ├── DEMO_GUIDE.md
-└── SECURITY_AUDIT_PHASE6.md
+├── FINAL_PROJECT_REPORT.md
+├── PRIVACY_AND_SECURITY.md
+├── PROJECT_ARCHITECTURE.md
+├── SECURITY_AUDIT_PHASE6.md
+├── TESTING_AND_EVALUATION.md
+└── community_project_ppt_updated.pptx
 ```
 
 ## Local Installation & Execution (Linux)
@@ -87,14 +86,22 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Edit `.env` to set a random `SECRET_KEY` and (optionally) `SAFE_BROWSING_API_KEY`. Then run locally:
+Generate a local `SECRET_KEY` and place it in `.env` (keep `FLASK_DEBUG=0`):
+
+```bash
+python3 -c "import secrets; print(secrets.token_hex(32))"
+```
+
+*(Optional)* Add a non-commercial `SAFE_BROWSING_API_KEY` to `.env` for live Google Safe Browsing v5 lookups (see [API_CONFIGURATION.md](API_CONFIGURATION.md)).
+
+Start the application locally:
 
 ```bash
 source .venv/bin/activate
 python run.py
 ```
 
-Open `http://127.0.0.1:5000` in your browser. Do not deploy publicly without TLS/HTTPS reverse-proxy termination.
+Open `http://127.0.0.1:5000` in your browser. Do not deploy publicly without HTTPS reverse-proxy termination.
 
 ## Testing & Evaluation Commands
 
@@ -102,18 +109,28 @@ Open `http://127.0.0.1:5000` in your browser. Do not deploy publicly without TLS
 source .venv/bin/activate
 pip check
 pytest -v
-python evaluation/evaluate_detection.py --input evaluation/synthetic_smoke_samples.csv
+python evaluation/split_dataset.py --input evaluation/synthetic_smoke_samples.csv --out-dir /tmp/eval_splits
+python evaluation/evaluate_detection.py --input evaluation/synthetic_smoke_samples.csv --threshold 31
 ```
+
+## Verification & Evaluation Status
+
+- **Automated Tests:** `67 passed` (`pytest -v`), plus Playwright Chromium verification of all 10 demonstration steps across mobile (`390x844`), tablet (`768x1024`), and desktop (`1366x768`) viewports with zero console errors or horizontal overflow.
+- **Dependency Check:** `pip check` clean; `pip-audit` reported zero vulnerabilities across runtime packages (`Flask`, `Werkzeug`, `Jinja2`, `requests`, `urllib3`, `certifi`, `python-dotenv`).
+- **Pending Human Academic Steps:**
+  1. Optional live Google Safe Browsing v5 test after adding `SAFE_BROWSING_API_KEY` to `.env`.
+  2. Collecting, redacting, and independently annotating (two annotators) 300+ genuine messages (including 100+ genuine bank/UPI/delivery notifications) using [evaluation/annotation_template.csv](evaluation/annotation_template.csv), then running the frozen held-out evaluation.
+  3. Conducting the voluntary 20–30 participant usability study per [evaluation/USABILITY_STUDY_PROTOCOL.md](evaluation/USABILITY_STUDY_PROTOCOL.md).
 
 ## Documentation Index
 
-- [PROJECT_ARCHITECTURE.md](PROJECT_ARCHITECTURE.md) — System design, data flow, and Mermaid architecture diagram
-- [PRIVACY_AND_SECURITY.md](PRIVACY_AND_SECURITY.md) — Transient processing, privacy reduction, security headers, and logging rules
+- [PROJECT_ARCHITECTURE.md](PROJECT_ARCHITECTURE.md) — System design, module structure, and Mermaid architecture diagram
+- [PRIVACY_AND_SECURITY.md](PRIVACY_AND_SECURITY.md) — Transient processing, privacy reduction, security headers, and Task 4 audit findings
 - [API_CONFIGURATION.md](API_CONFIGURATION.md) — Environment variables, Google Safe Browsing v5, and RDAP setup
-- [TESTING_AND_EVALUATION.md](TESTING_AND_EVALUATION.md) — Automated tests, dataset evaluation protocol, and usability study plan
+- [TESTING_AND_EVALUATION.md](TESTING_AND_EVALUATION.md) — Automated test suite, dataset protocol, and synthetic smoke evaluation results
 - [DEMO_GUIDE.md](DEMO_GUIDE.md) — 10-step academic demonstration script with fictional inputs
 - [SECURITY_AUDIT_PHASE6.md](SECURITY_AUDIT_PHASE6.md) — Phase 6 security, dependency, and accessibility review
-- [FINAL_PROJECT_REPORT.md](FINAL_PROJECT_REPORT.md) — Final academic project report (23 sections + Mermaid diagrams + honest evaluation status)
+- [FINAL_PROJECT_REPORT.md](FINAL_PROJECT_REPORT.md) — Final academic project report (23 sections, diagrams, honest pending markers)
 - [community_project_ppt_updated.pptx](community_project_ppt_updated.pptx) — Updated 22-slide final review & viva presentation
 
 ## Known Limitations
@@ -121,5 +138,5 @@ python evaluation/evaluate_detection.py --input evaluation/synthetic_smoke_sampl
 - English is the only supported language; Hindi, Kannada, and code-mixed scam wording may not match rules.
 - Novel phishing wording can score `0–30`; `"No known red flags"` never proves safety.
 - Shortened URLs are never expanded and remain labelled `"Destination not verified"`.
-- Google Safe Browsing v5 requires a non-commercial API key and external network access; missing/unavailable services are always shown as `"Reputation information unavailable"`.
-- Formal evaluation on 300+ genuine de-identified messages and a 20–30 participant user study are prepared as templates/scripts and have not yet been executed on external field data.
+- Google Safe Browsing v5 requires a non-commercial API key and external network access; missing or unavailable services display `"Reputation information unavailable"`.
+- Formal evaluation on 300+ genuine de-identified messages and a 20–30 participant usability study remain pending human execution.
