@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% from "components.html" import page_header, status_banner, privacy_notice, emergency_strip %}
+
+{% block title %}URL Analyser{% endblock %}
+
+{% block content %}
+  {{ page_header(
+    title="Text-Only URL Analyser",
+    subtitle="Examine suspicious links for structural deception without ever opening, visiting, or fetching the destination.",
+    eyebrow="Module C — URL Inspection",
+    status_badge={"kind": "info", "label": "Phase 3 — Under Development"}
+  ) }}
+
+  <section class="section">
+    <div class="container layout-split">
+      <div class="layout-split__main">
+        {{ status_banner(
+          kind="info",
+          title="URL Inspection & External Reputation Scheduled for Phase 3",
+          message="Local URL parsing, Google Safe Browsing API v5 four-byte SHA-256 hash-prefix checks, and registrable-domain RDAP lookups will be implemented in Phase 3. No fake reputation results are displayed here."
+        ) }}
+
+        <form class="panel-form" aria-describedby="url-dev-note">
+          <div class="form-group">
+            <label class="form-label" for="url-input">
+              URL to Inspect as Text (maximum {{ max_url_length }} characters in Phase 3)
+            </label>
+            <input
+              type="text"
+              class="form-control form-control--mono"
+              id="url-input"
+              name="url"
+              maxlength="{{ max_url_length }}"
+              placeholder="https://example.com/verify (inspection enabled in Phase 3)"
+              disabled
+              aria-disabled="true"
+            >
+            <p class="form-hint" id="url-dev-note">
+              Only HTTP/HTTPS URL text will be parsed locally. Shortened links are never expanded automatically and will be labelled "destination not verified".
+            </p>
+          </div>
+
+          <fieldset class="form-fieldset" disabled aria-disabled="true">
+            <legend class="form-legend">External Reputation Opt-In (Phase 3)</legend>
+            <label class="checkbox-label">
+              <input type="checkbox" name="consent_external" disabled>
+              <span>
+                I explicitly consent to sending privacy-reduced indicators (4-byte SHA-256 hash prefixes to Google Safe Browsing v5 and registrable domain only to RDAP). Credentials, query values, and fragments are stripped first.
+              </span>
+            </label>
+          </fieldset>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn--primary" disabled aria-disabled="true">
+              Inspect URL (Available in Phase 3)
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <aside class="layout-split__side">
+        {{ privacy_notice(
+          title="URL Safety & Privacy Rules",
+          items=[
+            "Submitted URLs are never opened, visited, or fetched by the server.",
+            "Redirects are never followed and URL shorteners are never expanded.",
+            "Full submitted URLs are never stored in logs or databases.",
+            "Unavailable external services are always reported as 'Reputation information unavailable'—never as 'clean'."
+          ]
+        ) }}
+
+        <div class="card">
+          <h2 class="card__title">Planned Local Structural Checks</h2>
+          <ul class="plain-list">
+            <li>IP-address hosts instead of domain names</li>
+            <li>Misleading subdomains and brand look-alikes</li>
+            <li>Punycode (IDN) homograph indicators</li>
+            <li>Suspicious paths, obfuscated encoding, and excessive length</li>
+            <li>Known URL shorteners (labelled unverified)</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  {{ emergency_strip() }}
+{% endblock %}

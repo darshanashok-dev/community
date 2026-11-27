@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% from "components.html" import page_header, status_banner, privacy_notice %}
+
+{% block title %}Android Permission Guide{% endblock %}
+
+{% block content %}
+  {{ page_header(
+    title="Android Special-Access Permission Guide",
+    subtitle="Understand what sensitive Android permissions do, why legitimate apps use them, how scammers may abuse them, and how to review them in Settings.",
+    eyebrow="Module F — Educational Permission Awareness",
+    status_badge={"kind": "info", "label": "Expanded Interactive Guide in Phase 5"}
+  ) }}
+
+  <section class="section">
+    <div class="container">
+      {{ status_banner(
+        kind="caution",
+        title="Educational Guidance Only — Not Malware Detection",
+        message="Requesting a sensitive permission does not by itself prove an application is malicious. This platform does not upload, execute, scan, or classify APK files."
+      ) }}
+
+      <div class="grid grid--2 section__header--spaced">
+        <article class="card">
+          <h2 class="card__title">1. Accessibility Access</h2>
+          <p class="card__text">
+            Designed to assist users with disabilities by reading screen content and performing automated interface actions. Legitimate screen readers rely on it; abusive apps can read OTPs or perform unauthorised taps.
+          </p>
+        </article>
+        <article class="card">
+          <h2 class="card__title">2. Notification Access</h2>
+          <p class="card__text">
+            Allows companion apps (such as smartwatches or call-screeners) to display or manage notifications. If abused, an app could silently read incoming banking alerts and OTPs.
+          </p>
+        </article>
+        <article class="card">
+          <h2 class="card__title">3. Display Over Other Apps</h2>
+          <p class="card__text">
+            Used legitimately by chat bubbles, floating timers, and screen-dimming tools. Maliciously, overlays can hide warning prompts or mimic legitimate login screens.
+          </p>
+        </article>
+        <article class="card">
+          <h2 class="card__title">4. Install Unknown Apps</h2>
+          <p class="card__text">
+            Permits a browser, file manager, or messaging app to install APK packages outside an official app store. Scammers often send APK files over chat pretending to be bank updates or e-challans.
+          </p>
+        </article>
+      </div>
+
+      <div class="section__header--spaced">
+        {{ privacy_notice(
+          title="Scheduled for Phase 5",
+          items=[
+            "Detailed breakdown of legitimate uses, abuse scenarios, and step-by-step Android Settings paths for each permission.",
+            "Interactive educational checklist explaining why context (who sent the app and why it requests access) matters."
+          ]
+        ) }}
+      </div>
+    </div>
+  </section>
+{% endblock %}

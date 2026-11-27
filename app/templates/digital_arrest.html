@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% from "components.html" import page_header, status_banner, emergency_strip %}
+
+{% block title %}Digital-Arrest Awareness{% endblock %}
+
+{% block content %}
+  {{ page_header(
+    title="Recognising Digital-Arrest Scams",
+    subtitle="Learn how impersonators use authority, fear, video calls, and secrecy to coerce victims—and how to verify claims safely.",
+    eyebrow="Module D — Digital-Arrest Guidance",
+    status_badge={"kind": "info", "label": "Interactive Checklist Scheduled for Phase 4"}
+  ) }}
+
+  <section class="section">
+    <div class="container">
+      {{ status_banner(
+        kind="calm",
+        title="Important Truth: Indian Law Enforcement Does Not Conduct 'Digital Arrests'",
+        message="No genuine police officer, CBI official, court, or government agency will isolate you on a video call, threaten immediate arrest unless you pay, or ask you to transfer funds to a 'safe' or 'verification' account."
+      ) }}
+
+      <div class="section__header section__header--spaced">
+        <h2 class="section__title">Six Common Tactics Used in Digital-Arrest Scams</h2>
+        <p class="section__subtitle">
+          Based on Indian Cyber Crime Coordination Centre (I4C) and CERT-In advisories, scammers commonly combine these psychological pressures:
+        </p>
+      </div>
+
+      <div class="grid grid--3">
+        <article class="card">
+          <h3 class="card__title">1. Authority Impersonation</h3>
+          <p class="card__text">
+            Callers claim to represent Police, CBI, Customs, Narcotics, RBI, TRAI, or courier firms, citing fake case numbers or forged IDs.
+          </p>
+        </article>
+        <article class="card">
+          <h3 class="card__title">2. Fear &amp; Artificial Urgency</h3>
+          <p class="card__text">
+            They allege your Aadhaar, SIM, or parcel is linked to money laundering or contraband and demand immediate action to avoid arrest.
+          </p>
+        </article>
+        <article class="card">
+          <h3 class="card__title">3. Video-Call Pressure</h3>
+          <p class="card__text">
+            Victims are instructed to keep their camera on continuously on messaging or video apps, sometimes in front of a fake police-station backdrop.
+          </p>
+        </article>
+        <article class="card">
+          <h3 class="card__title">4. Secrecy Instructions</h3>
+          <p class="card__text">
+            Scammers forbid you from speaking to family, friends, or bank staff—claiming the investigation is confidential—to prevent a reality check.
+          </p>
+        </article>
+        <article class="card">
+          <h3 class="card__title">5. 'Safe-Account' Transfers</h3>
+          <p class="card__text">
+            You are pressured to move savings into a "RBI verification" or "government safe" account with the promise it will be refunded after clearance.
+          </p>
+        </article>
+        <article class="card">
+          <h3 class="card__title">6. Isolation &amp; Exhaustion</h3>
+          <p class="card__text">
+            Long calls wear down judgement. Hanging up and verifying independently with family or local police immediately breaks their control.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tinted" aria-labelledby="checklist-placeholder-heading">
+    <div class="container">
+      <div class="card">
+        <span class="badge badge--info">Phase 4 — Under Development</span>
+        <h2 id="checklist-placeholder-heading" class="card__title card__title--spaced">
+          Interactive Digital-Arrest Call Checklist
+        </h2>
+        <p class="card__text">
+          In Phase 4, this section will allow you to check off warning signs observed during a call and receive a calm, tailored advisory explanation and immediate action plan.
+        </p>
+        <div class="card__actions">
+          <a class="btn btn--primary" href="{{ url_for('main.after_scam') }}">Need Immediate Help? Go to After-Scam Steps</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {{ emergency_strip() }}
+{% endblock %}

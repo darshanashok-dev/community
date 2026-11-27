@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{{ project_title }}">
+  <title>{% block title %}{{ app_name }}{% endblock %} | {{ app_name }}</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/shield.svg') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="brand" href="{{ url_for('main.home') }}">
+        <img src="{{ url_for('static', filename='images/shield.svg') }}" alt="" width="28" height="28">
+        <span class="brand__text">
+          <span class="brand__name">{{ app_name }}</span>
+          <span class="brand__sub">Public Scam &amp; Privacy Guide</span>
+        </span>
+      </a>
+
+      <button
+        type="button"
+        class="nav-toggle"
+        id="nav-toggle"
+        aria-expanded="false"
+        aria-controls="primary-navigation"
+        aria-label="Toggle navigation menu"
+      >
+        <span class="nav-toggle__label">Menu</span>
+      </button>
+
+      <nav class="site-nav" id="primary-navigation" aria-label="Primary navigation">
+        <ul class="site-nav__list">
+          {% set ep = request.endpoint %}
+          <li>
+            <a href="{{ url_for('main.home') }}" {% if ep == 'main.home' %}aria-current="page"{% endif %}>Home</a>
+          </li>
+          <li>
+            <a href="{{ url_for('analyzer.message_analyser') }}" {% if ep == 'analyzer.message_analyser' %}aria-current="page"{% endif %}>Message Analyser</a>
+          </li>
+          <li>
+            <a href="{{ url_for('analyzer.url_analyser') }}" {% if ep == 'analyzer.url_analyser' %}aria-current="page"{% endif %}>URL Analyser</a>
+          </li>
+          <li>
+            <a href="{{ url_for('main.digital_arrest') }}" {% if ep == 'main.digital_arrest' %}aria-current="page"{% endif %}>Digital Arrest</a>
+          </li>
+          <li>
+            <a href="{{ url_for('main.after_scam') }}" {% if ep == 'main.after_scam' %}aria-current="page"{% endif %}>After-Scam Help</a>
+          </li>
+          <li>
+            <a href="{{ url_for('main.android_guide') }}" {% if ep == 'main.android_guide' %}aria-current="page"{% endif %}>Android Permissions</a>
+          </li>
+          <li>
+            <a href="{{ url_for('main.learning') }}" {% if ep == 'main.learning' %}aria-current="page"{% endif %}>Lessons &amp; Reporting</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content" tabindex="-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div class="site-footer__col">
+        <h2 class="site-footer__heading">{{ project_title }}</h2>
+        <p class="site-footer__text">
+          Academic community project designed to explain phishing signs, digital-arrest coercion,
+          suspicious URL structures, and sensitive Android permissions in plain language.
+        </p>
+        <p class="site-footer__advisory">
+          <strong>Advisory notice:</strong> Results are educational indicators, not calibrated probabilities
+          and never proof that a message, link, caller, or application is safe.
+        </p>
+      </div>
+      <div class="site-footer__col">
+        <h2 class="site-footer__heading">Privacy Commitments</h2>
+        <ul class="site-footer__list">
+          <li>Submitted messages are processed transiently in memory only.</li>
+          <li>URLs are inspected as text and are never opened or fetched.</li>
+          <li>No user accounts, phone numbers, or personal details are collected.</li>
+        </ul>
+      </div>
+      <div class="site-footer__col">
+        <h2 class="site-footer__heading">Official India Helplines</h2>
+        <ul class="site-footer__list">
+          <li>Financial Cyber Fraud Helpline: <strong>1930</strong></li>
+          <li>National Cybercrime Portal: <strong>cybercrime.gov.in</strong></li>
+          <li>CERT-In Advisories: <strong>cert-in.org.in</strong></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+</body>
+</html>

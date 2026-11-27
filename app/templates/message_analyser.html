@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% from "components.html" import page_header, status_banner, privacy_notice, emergency_strip %}
+
+{% block title %}Message Analyser{% endblock %}
+
+{% block content %}
+  {{ page_header(
+    title="Phishing & Digital-Arrest Message Analyser",
+    subtitle="Inspect pasted SMS, WhatsApp, or email text for contextual phishing and coercion indicators.",
+    eyebrow="Module B — Message Analysis",
+    status_badge={"kind": "info", "label": "Phase 2 — Under Development"}
+  ) }}
+
+  <section class="section">
+    <div class="container layout-split">
+      <div class="layout-split__main">
+        {{ status_banner(
+          kind="info",
+          title="Analysis Engine Scheduled for Phase 2",
+          message="This page currently presents the planned interface and privacy boundaries. Automated contextual rule scoring is not yet active, and no simulated or placeholder verdicts are generated."
+        ) }}
+
+        <form class="panel-form" aria-describedby="message-dev-note">
+          <div class="form-group">
+            <label class="form-label" for="message-channel">Message Channel</label>
+            <select class="form-control" id="message-channel" name="channel" disabled aria-disabled="true">
+              <option value="sms">SMS</option>
+              <option value="whatsapp">WhatsApp</option>
+              <option value="email">Email</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="message-text">
+              Message Text (maximum {{ max_message_length }} characters in Phase 2)
+            </label>
+            <textarea
+              class="form-control form-control--textarea"
+              id="message-text"
+              name="message"
+              rows="6"
+              maxlength="{{ max_message_length }}"
+              placeholder="Message analysis will be enabled in Phase 2. Do not enter real passwords, full bank account numbers, or active OTPs."
+              disabled
+              aria-disabled="true"
+            ></textarea>
+            <p class="form-hint" id="message-dev-note">
+              Controls are disabled during Phase 1 so no non-functional submission or fake output is shown.
+            </p>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn--primary" disabled aria-disabled="true">
+              Analyse Message (Available in Phase 2)
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <aside class="layout-split__side">
+        {{ privacy_notice(
+          title="Message Privacy Guarantees",
+          items=[
+            "Messages are processed transiently in server memory only.",
+            "Submitted text is never written to a database, file, or application log.",
+            "Message content is never transmitted to any external API or third-party service.",
+            "Please redact personal names, phone numbers, and real account details before testing."
+          ]
+        ) }}
+
+        <div class="card">
+          <h2 class="card__title">Planned Scoring Bands (0–100)</h2>
+          <p class="card__text">
+            Scores represent weighted rule matches—not calibrated probabilities—and remain advisory.
+          </p>
+          <ul class="band-list">
+            <li><span class="badge badge--calm">0–30</span> No known red flags (still verify independently)</li>
+            <li><span class="badge badge--caution">31–65</span> Some warning signs present</li>
+            <li><span class="badge badge--urgent">66–100</span> Strong scam signs detected</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  {{ emergency_strip() }}
+{% endblock %}

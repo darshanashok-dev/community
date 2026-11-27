@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% from "components.html" import feature_card, privacy_notice, emergency_strip %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <div class="container hero__grid">
+      <div class="hero__content">
+        <span class="eyebrow">Public Cybersecurity Awareness</span>
+        <h1 class="hero__title">Understand suspicious messages, deceptive links, and digital-arrest scams before you act.</h1>
+        <p class="hero__lead">
+          Scammers rely on urgency, fear, and impersonation. This privacy-conscious platform helps you spot
+          common warning signs in plain language and guides you to verified Indian reporting channels.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="{{ url_for('analyzer.message_analyser') }}">Explore Message Analyser</a>
+          <a class="btn btn--secondary" href="{{ url_for('main.digital_arrest') }}">Recognise Digital Arrest</a>
+          <a class="btn btn--quiet" href="{{ url_for('main.after_scam') }}">After-Scam Help</a>
+        </div>
+      </div>
+
+      <aside class="hero__panel" aria-label="Core safety principles">
+        <h2 class="hero__panel-title">How this platform protects your privacy</h2>
+        <ul class="checklist-summary">
+          <li>
+            <strong>In-memory message checks:</strong> Pasted texts are never saved to a database or shared with third-party services.
+          </li>
+          <li>
+            <strong>No link visiting:</strong> Submitted URLs are examined strictly as text—never opened, followed, or fetched.
+          </li>
+          <li>
+            <strong>Advisory, not absolute:</strong> "No known red flags" never guarantees a message, caller, or link is safe.
+          </li>
+          <li>
+            <strong>Calm, non-blaming support:</strong> If you suspect a scam, you are not to blame. Clear recovery steps are always one click away.
+          </li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="threats-heading">
+    <div class="container">
+      <div class="section__header">
+        <h2 id="threats-heading" class="section__title">Common Threats Covered</h2>
+        <p class="section__subtitle">
+          Understand the tactics behind everyday phishing messages, impersonation calls, deceptive web links, and sensitive mobile permissions.
+        </p>
+      </div>
+
+      <div class="grid grid--2">
+        {{ feature_card(
+          title="Phishing & Smishing Messages",
+          description="Attackers imitate banks, delivery services, or utilities via SMS, WhatsApp, and email to create artificial urgency and capture OTPs, PINs, or payments.",
+          href=url_for('analyzer.message_analyser'),
+          link_label="Open Message Analyser",
+          tag="Phase 2 Engine"
+        ) }}
+
+        {{ feature_card(
+          title="Digital-Arrest Coercion",
+          description="Impersonators posing as police, CBI, customs, or telecom officials threaten arrest over video calls, demand secrecy, and pressure victims into 'safe-account' transfers.",
+          href=url_for('main.digital_arrest'),
+          link_label="Read Digital-Arrest Guide",
+          tag="Core Awareness"
+        ) }}
+
+        {{ feature_card(
+          title="Deceptive & Obfuscated URLs",
+          description="Fraudulent links hide behind look-alike spellings, misleading subdomains, IP addresses, punycode characters, or unverified link shorteners.",
+          href=url_for('analyzer.url_analyser'),
+          link_label="Open URL Analyser",
+          tag="Phase 3 Engine"
+        ) }}
+
+        {{ feature_card(
+          title="Sensitive Android Access",
+          description="Certain Android settings—such as Accessibility, Notification access, Overlay display, and Install unknown apps—can be abused if granted to untrusted apps.",
+          href=url_for('main.android_guide'),
+          link_label="Review Android Permissions",
+          tag="Guidance Only"
+        ) }}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tinted" aria-labelledby="modules-heading">
+    <div class="container">
+      <div class="section__header">
+        <h2 id="modules-heading" class="section__title">Platform Modules</h2>
+        <p class="section__subtitle">
+          Every module focuses on clear explanations rather than opaque labels.
+        </p>
+      </div>
+
+      <div class="grid grid--3">
+        {{ feature_card(
+          title="Explainable Scoring (0–100)",
+          description="Contextual rules evaluate combinations of impersonation, urgency, threats, secrecy, and payment demands—reducing false alarms on genuine bank or delivery alerts.",
+          href=url_for('analyzer.message_analyser'),
+          link_label="View Scoring Structure"
+        ) }}
+
+        {{ feature_card(
+          title="Lessons, Scenarios & Reporting",
+          description="Short, practical lessons, interactive quizzes, and verified official reporting links including 1930, cybercrime.gov.in, and CERT-In.",
+          href=url_for('main.learning'),
+          link_label="Explore Lessons & Reporting"
+        ) }}
+
+        {{ feature_card(
+          title="Ordered After-Scam Recovery",
+          description="Step-by-step guidance on reporting financial fraud via 1930, alerting your bank, and preserving chat and transaction evidence calmly.",
+          href=url_for('main.after_scam'),
+          link_label="View Recovery Steps"
+        ) }}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="scope-heading">
+    <div class="container">
+      {{ privacy_notice(
+        title="Scope & Safety Boundaries",
+        items=[
+          "This platform provides educational indicators only; scores are weighted rule matches, not calibrated probabilities.",
+          "It does not scan or classify APK files, monitor live phone calls, or read your WhatsApp chats.",
+          "External URL reputation checks (added in Phase 3) will only run with your explicit opt-in using privacy-reduced indicators."
+        ]
+      ) }}
+    </div>
+  </section>
+
+  {{ emergency_strip() }}
+{% endblock %}

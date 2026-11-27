@@ -1,0 +1,72 @@
+{# Reusable UI component macros for consistent, accessible layouts #}
+
+{% macro page_header(title, subtitle, eyebrow=None, status_badge=None) %}
+<section class="page-header">
+  <div class="container">
+    <div class="page-header__meta">
+      {% if eyebrow %}
+        <span class="eyebrow">{{ eyebrow }}</span>
+      {% endif %}
+      {% if status_badge %}
+        <span class="badge badge--{{ status_badge.kind | default('info') }}">{{ status_badge.label }}</span>
+      {% endif %}
+    </div>
+    <h1 class="page-header__title">{{ title }}</h1>
+    <p class="page-header__subtitle">{{ subtitle }}</p>
+  </div>
+</section>
+{% endmacro %}
+
+
+{% macro status_banner(kind, title, message, role='status') %}
+<div class="banner banner--{{ kind }}" role="{{ role }}">
+  <div class="banner__body">
+    <strong class="banner__title">{{ title }}</strong>
+    <p class="banner__text">{{ message }}</p>
+  </div>
+</div>
+{% endmacro %}
+
+
+{% macro privacy_notice(title, items) %}
+<aside class="notice-box" aria-label="{{ title }}">
+  <h2 class="notice-box__title">{{ title }}</h2>
+  <ul class="notice-box__list">
+    {% for item in items %}
+      <li>{{ item }}</li>
+    {% endfor %}
+  </ul>
+</aside>
+{% endmacro %}
+
+
+{% macro feature_card(title, description, href, link_label, tag=None) %}
+<article class="card">
+  {% if tag %}
+    <span class="card__tag">{{ tag }}</span>
+  {% endif %}
+  <h3 class="card__title">{{ title }}</h3>
+  <p class="card__text">{{ description }}</p>
+  <div class="card__actions">
+    <a class="btn btn--secondary" href="{{ href }}">{{ link_label }}</a>
+  </div>
+</article>
+{% endmacro %}
+
+
+{% macro emergency_strip() %}
+<section class="emergency-strip" aria-labelledby="emergency-strip-heading">
+  <div class="container emergency-strip__inner">
+    <div>
+      <h2 id="emergency-strip-heading" class="emergency-strip__title">Need immediate help after a suspected scam?</h2>
+      <p class="emergency-strip__text">
+        You are not to blame. In India, call the National Cyber Crime Helpline <strong>1930</strong>
+        or report at <strong>cybercrime.gov.in</strong> as soon as possible.
+      </p>
+    </div>
+    <div class="emergency-strip__actions">
+      <a class="btn btn--primary" href="{{ url_for('main.after_scam') }}">View Ordered Recovery Steps</a>
+    </div>
+  </div>
+</section>
+{% endmacro %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from "components.html" import page_header %}
+
+{% block title %}Page Not Found{% endblock %}
+
+{% block content %}
+  {{ page_header(
+    title="Page Not Found (404)",
+    subtitle="The page you requested does not exist or may have moved.",
+    eyebrow="Navigation"
+  ) }}
+
+  <section class="section">
+    <div class="container">
+      <div class="card card--narrow">
+        <p class="card__text">
+          Use the navigation bar above or return to the home page to access the message analyser,
+          URL analyser, digital-arrest awareness guide, or after-scam assistance.
+        </p>
+        <div class="card__actions">
+          <a class="btn btn--primary" href="{{ url_for('main.home') }}">Return to Home</a>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

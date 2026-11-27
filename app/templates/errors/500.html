@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from "components.html" import page_header %}
+
+{% block title %}Unexpected Error{% endblock %}
+
+{% block content %}
+  {{ page_header(
+    title="Something Went Wrong",
+    subtitle="An unexpected error occurred while processing your request.",
+    eyebrow="Service Notice"
+  ) }}
+
+  <section class="section">
+    <div class="container">
+      <div class="card card--narrow">
+        <p class="card__text">
+          For your privacy and security, technical details are not displayed here and no submitted text
+          is retained. Please try again or return to the home page.
+        </p>
+        <div class="card__actions">
+          <a class="btn btn--primary" href="{{ url_for('main.home') }}">Return to Home</a>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

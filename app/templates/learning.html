@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% from "components.html" import page_header, status_banner %}
+
+{% block title %}Lessons &amp; Reporting{% endblock %}
+
+{% block content %}
+  {{ page_header(
+    title="Cybersecurity Lessons, Quizzes & Official Reporting",
+    subtitle="Build practical scam-recognition skills with scenario-based lessons and find verified official reporting portals.",
+    eyebrow="Modules G &amp; H — Learning &amp; Official Resources",
+    status_badge={"kind": "info", "label": "Lessons & Quizzes Scheduled for Phase 5"}
+  ) }}
+
+  <section class="section">
+    <div class="container">
+      {{ status_banner(
+        kind="info",
+        title="Interactive Lessons and Quizzes Scheduled for Phase 5",
+        message="Structured short lessons, fictional scenario quizzes, score calculation, and retry support will be added in Phase 5 using static SQLite/JSON content."
+      ) }}
+
+      <div class="grid grid--2 section__header--spaced">
+        <article class="card">
+          <h2 class="card__title">Planned Lesson Topics (Phase 5)</h2>
+          <ul class="plain-list">
+            <li>Spotting phishing &amp; smishing clues in context</li>
+            <li>Reading suspicious URLs without clicking them</li>
+            <li>Recognising digital-arrest coercion tactics</li>
+            <li>OTP, UPI PIN, and everyday banking safety</li>
+            <li>Understanding sensitive Android app permissions</li>
+            <li>When and how to report cybercrime</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h2 class="card__title">Official Reporting &amp; Advisory Resources</h2>
+          <ul class="resource-list">
+            <li>
+              <strong>National Cyber Crime Helpline — 1930</strong>
+              <p>Immediate telephonic reporting for financial cyber fraud in India.</p>
+            </li>
+            <li>
+              <strong>National Cyber Crime Reporting Portal — cybercrime.gov.in</strong>
+              <p>Official Government of India (I4C / MHA) portal to lodge cybercrime complaints and read advisories.</p>
+            </li>
+            <li>
+              <strong>CERT-In — cert-in.org.in</strong>
+              <p>Indian Computer Emergency Response Team advisories on online scams and security practices.</p>
+            </li>
+            <li>
+              <strong>After-Scam Guided Checklist</strong>
+              <p><a href="{{ url_for('main.after_scam') }}">Open our ordered post-scam action steps</a>.</p>
+            </li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+{% endblock %}
