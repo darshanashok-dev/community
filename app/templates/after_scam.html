@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "components.html" import page_header, status_banner %}
+{% from "components.html" import page_header, status_banner, privacy_notice %}
 
 {% block title %}After-Scam Assistance{% endblock %}
 
@@ -8,73 +8,150 @@
     title="After-Scam Assistance & Recovery Steps",
     subtitle="Calm, ordered actions to protect your accounts, report financial cyber fraud quickly, and preserve evidence.",
     eyebrow="Module E — Supportive Recovery",
-    status_badge={"kind": "info", "label": "Full Workflow & Integration in Phase 4"}
+    status_badge={"kind": "calm", "label": "Verified Official India Reporting Workflow"}
   ) }}
 
   <section class="section">
-    <div class="container">
-      {{ status_banner(
-        kind="calm",
-        title="You are not to blame.",
-        message="Scammers use rehearsed psychological pressure and forged authority cues. Take one steady step at a time—acting promptly helps limit financial loss and supports recovery."
-      ) }}
+    <div class="container layout-split">
+      <div class="layout-split__main">
+        {{ status_banner(
+          kind="calm",
+          title="You are not to blame.",
+          message="Scammers use rehearsed psychological pressure, forged authority documents, and artificial urgency. Take one steady step at a time—acting promptly during the early hours gives banks and cybercrime teams the best chance to freeze disputed funds."
+        ) }}
 
-      <ol class="step-list">
-        <li class="step-card">
-          <span class="step-card__num">1</span>
-          <div>
-            <h2 class="step-card__title">Call 1930 immediately for financial cyber fraud</h2>
-            <p class="step-card__text">
-              If money was transferred or banking credentials were shared, dial India's National Cyber Crime Helpline <strong>1930</strong> as quickly as possible so suspicious fund flows can be flagged.
-            </p>
+        <div class="progress-toolbar" aria-live="polite">
+          <p class="progress-toolbar__text" id="recovery-progress-text">
+            0 of 6 recovery steps marked complete (for your reference only).
+          </p>
+          <button type="button" class="btn btn--quiet btn--sm" id="reset-recovery-checks">Reset Marks</button>
+        </div>
+
+        <ol class="step-list">
+          <li class="step-card">
+            <span class="step-card__num">1</span>
+            <div>
+              <div class="step-card__head">
+                <h2 class="step-card__title">Call 1930 immediately for financial cyber fraud reporting</h2>
+                <label class="step-check-label">
+                  <input type="checkbox" class="recovery-step-check">
+                  <span>Done</span>
+                </label>
+              </div>
+              <p class="step-card__text">
+                Dial India's 24/7 toll-free National Cyber Crime Helpline <strong>1930</strong> as soon as possible if money was transferred or banking credentials were exposed. Helpline operators log the transaction in the Citizen Financial Cyber Fraud Reporting and Management System (CFCFRMS) to alert banks and attempt an urgent freeze.
+              </p>
+            </div>
+          </li>
+
+          <li class="step-card">
+            <span class="step-card__num">2</span>
+            <div>
+              <div class="step-card__head">
+                <h2 class="step-card__title">Report through cybercrime.gov.in</h2>
+                <label class="step-check-label">
+                  <input type="checkbox" class="recovery-step-check">
+                  <span>Done</span>
+                </label>
+              </div>
+              <p class="step-card__text">
+                File a formal complaint on the official Government of India (I4C / MHA) portal <strong>cybercrime.gov.in</strong> under "File a Complaint". Complete OTP verification, enter exact transaction and caller details, upload screenshots, and save your <strong>acknowledgement number</strong>.
+              </p>
+            </div>
+          </li>
+
+          <li class="step-card">
+            <span class="step-card__num">3</span>
+            <div>
+              <div class="step-card__head">
+                <h2 class="step-card__title">Contact your bank immediately</h2>
+                <label class="step-check-label">
+                  <input type="checkbox" class="recovery-step-check">
+                  <span>Done</span>
+                </label>
+              </div>
+              <p class="step-card__text">
+                Call your bank's official helpline (printed on the back of your debit/credit card or inside your official banking app—never from a search-engine ad). Request temporary blocking of compromised cards, UPI IDs, or net banking, and record your bank complaint/ticket reference.
+              </p>
+            </div>
+          </li>
+
+          <li class="step-card">
+            <span class="step-card__num">4</span>
+            <div>
+              <div class="step-card__head">
+                <h2 class="step-card__title">Preserve transaction records</h2>
+                <label class="step-check-label">
+                  <input type="checkbox" class="recovery-step-check">
+                  <span>Done</span>
+                </label>
+              </div>
+              <p class="step-card__text">
+                Keep copies of UTR / RRN reference numbers, exact transaction amounts, date and time stamps, recipient account numbers or UPI IDs, and bank SMS/email alerts.
+              </p>
+            </div>
+          </li>
+
+          <li class="step-card">
+            <span class="step-card__num">5</span>
+            <div>
+              <div class="step-card__head">
+                <h2 class="step-card__title">Retain relevant messages and evidence</h2>
+                <label class="step-check-label">
+                  <input type="checkbox" class="recovery-step-check">
+                  <span>Done</span>
+                </label>
+              </div>
+              <p class="step-card__text">
+                Do not delete chats or call logs yet. Save screenshots of SMS messages, WhatsApp threads, caller phone numbers, Skype/video-call usernames, suspicious links, and any forged PDF warrants or IDs. If an untrusted APK or remote-access app was installed, disconnect from the internet and remove it safely before changing passwords from a clean device.
+              </p>
+            </div>
+          </li>
+
+          <li class="step-card">
+            <span class="step-card__num">6</span>
+            <div>
+              <div class="step-card__head">
+                <h2 class="step-card__title">Follow up through appropriate official channels</h2>
+                <label class="step-check-label">
+                  <input type="checkbox" class="recovery-step-check">
+                  <span>Done</span>
+                </label>
+              </div>
+              <p class="step-card__text">
+                Track your complaint status on <strong>cybercrime.gov.in</strong> using your acknowledgement number and coordinate with your local cybercrime police station or bank grievance officer if requested. Beware of secondary scams: nobody online can recover lost money for an upfront fee.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <aside class="layout-split__side">
+        {{ privacy_notice(
+          title="Verified Official Sources",
+          items=[
+            "1930 — 24/7 National Cyber Crime Helpline (I4C / Ministry of Home Affairs, India).",
+            "cybercrime.gov.in — National Cyber Crime Reporting Portal for citizen complaints and acknowledgement tracking.",
+            "cert-in.org.in — CERT-In advisories on online scams (and technical incident desk for organisations)."
+          ]
+        ) }}
+
+        <div class="card">
+          <h2 class="card__title">Before You File on cybercrime.gov.in</h2>
+          <p class="card__text">Keep these items ready if available:</p>
+          <ul class="plain-list">
+            <li>Bank name, account/card last 4 digits, or UPI ID used</li>
+            <li>Transaction UTR/reference number, amount, date, and time</li>
+            <li>Suspect phone number, UPI ID, or bank account number</li>
+            <li>Screenshots of chats, call logs, or fake notices</li>
+          </ul>
+          <div class="card__actions">
+            <a class="btn btn--secondary" href="{{ url_for('main.digital_arrest') }}#call-checklist">Review Digital-Arrest Call Checklist</a>
           </div>
-        </li>
-        <li class="step-card">
-          <span class="step-card__num">2</span>
-          <div>
-            <h2 class="step-card__title">Report through cybercrime.gov.in</h2>
-            <p class="step-card__text">
-              File an official complaint on the National Cyber Crime Reporting Portal (<strong>cybercrime.gov.in</strong>) and save your acknowledgement number.
-            </p>
-          </div>
-        </li>
-        <li class="step-card">
-          <span class="step-card__num">3</span>
-          <div>
-            <h2 class="step-card__title">Contact your bank or payment provider immediately</h2>
-            <p class="step-card__text">
-              Use the official customer care number on the back of your card or inside your verified bank app to freeze compromised cards, UPI access, or net-banking credentials.
-            </p>
-          </div>
-        </li>
-        <li class="step-card">
-          <span class="step-card__num">4</span>
-          <div>
-            <h2 class="step-card__title">Preserve transaction records</h2>
-            <p class="step-card__text">
-              Save UTR/reference numbers, timestamps, recipient account/UPI IDs, and bank SMS alerts.
-            </p>
-          </div>
-        </li>
-        <li class="step-card">
-          <span class="step-card__num">5</span>
-          <div>
-            <h2 class="step-card__title">Retain relevant messages and evidence</h2>
-            <p class="step-card__text">
-              Take screenshots of suspicious SMS, WhatsApp chats, caller numbers, video-call details, and any URLs or forged documents sent to you.
-            </p>
-          </div>
-        </li>
-        <li class="step-card">
-          <span class="step-card__num">6</span>
-          <div>
-            <h2 class="step-card__title">Follow up through official channels only</h2>
-            <p class="step-card__text">
-              Track your complaint via <strong>cybercrime.gov.in</strong> or your local cyber police station. Never pay any third party claiming they can "recover" lost funds for a fee.
-            </p>
-          </div>
-        </li>
-      </ol>
+        </div>
+      </aside>
     </div>
   </section>
+
+  <script src="{{ url_for('static', filename='js/after_scam.js') }}" defer></script>
 {% endblock %}

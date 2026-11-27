@@ -107,12 +107,17 @@
 
               <div class="result-block__links">
                 {% if result.has_digital_arrest_signs %}
-                  <a class="btn btn--secondary" href="{{ url_for('main.digital_arrest') }}">Open Digital-Arrest Guidance</a>
+                  <a class="btn btn--secondary" href="{{ url_for('main.digital_arrest') }}#call-checklist">Open Digital-Arrest Call Checklist</a>
                 {% endif %}
                 {% if result.score >= 31 %}
                   <a class="btn btn--primary" href="{{ url_for('main.after_scam') }}">Already Shared Info or Paid? View Recovery Steps</a>
                 {% endif %}
               </div>
+              {% if result.has_digital_arrest_signs %}
+                <p class="form-hint">
+                  If the sender is also pressuring you on a voice or video call, use the <a href="{{ url_for('main.digital_arrest') }}#call-checklist">Digital-Arrest Call Checklist</a> to review coercion signs step by step.
+                </p>
+              {% endif %}
             </div>
           </section>
         {% endif %}

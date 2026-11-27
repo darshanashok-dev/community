@@ -1,86 +1,212 @@
 {% extends "base.html" %}
-{% from "components.html" import page_header, status_banner, emergency_strip %}
+{% from "components.html" import page_header, status_banner, privacy_notice, emergency_strip %}
 
 {% block title %}Digital-Arrest Awareness{% endblock %}
 
 {% block content %}
   {{ page_header(
     title="Recognising Digital-Arrest Scams",
-    subtitle="Learn how impersonators use authority, fear, video calls, and secrecy to coerce victims—and how to verify claims safely.",
+    subtitle="Learn how impersonators use authority, fear, video calls, and secrecy to coerce victims—and check warning signs with our interactive call checklist.",
     eyebrow="Module D — Digital-Arrest Guidance",
-    status_badge={"kind": "info", "label": "Interactive Checklist Scheduled for Phase 4"}
+    status_badge={"kind": "calm", "label": "Phase 4 — Active (Interactive Checklist)"}
   ) }}
 
   <section class="section">
     <div class="container">
       {{ status_banner(
         kind="calm",
-        title="Important Truth: Indian Law Enforcement Does Not Conduct 'Digital Arrests'",
-        message="No genuine police officer, CBI official, court, or government agency will isolate you on a video call, threaten immediate arrest unless you pay, or ask you to transfer funds to a 'safe' or 'verification' account."
+        title="Important Fact: Indian Law Enforcement Never Conducts 'Digital Arrests'",
+        message="No genuine police officer, CBI official, Customs/Narcotics officer, RBI official, or court will isolate you on a video call, threaten immediate arrest unless you pay, or ask you to transfer savings to a 'safe' or 'verification' account."
       ) }}
 
       <div class="section__header section__header--spaced">
-        <h2 class="section__title">Six Common Tactics Used in Digital-Arrest Scams</h2>
+        <h2 class="section__title">How Digital-Arrest Scams Work</h2>
         <p class="section__subtitle">
-          Based on Indian Cyber Crime Coordination Centre (I4C) and CERT-In advisories, scammers commonly combine these psychological pressures:
+          Based on Indian Cyber Crime Coordination Centre (I4C) Advisory TAU/ADV/003 and CERT-In guidance, scammers combine authority impersonation with psychological manipulation:
         </p>
       </div>
 
       <div class="grid grid--3">
         <article class="card">
-          <h3 class="card__title">1. Authority Impersonation</h3>
+          <h3 class="card__title">1. Government &amp; Regulator Impersonation</h3>
           <p class="card__text">
-            Callers claim to represent Police, CBI, Customs, Narcotics, RBI, TRAI, or courier firms, citing fake case numbers or forged IDs.
+            Calls often begin with an automated or live claim from TRAI, Telecom Dept, Customs, Courier, or RBI alleging your SIM card, Aadhaar, or parcel is flagged for illegal activity.
           </p>
         </article>
         <article class="card">
-          <h3 class="card__title">2. Fear &amp; Artificial Urgency</h3>
+          <h3 class="card__title">2. Police, CBI &amp; Court Impersonation</h3>
           <p class="card__text">
-            They allege your Aadhaar, SIM, or parcel is linked to money laundering or contraband and demand immediate action to avoid arrest.
+            You are "transferred" to fake Cyber Crime, Police, CBI, or Enforcement Directorate officers who display forged badges, FIRs, or arrest warrants with official-looking emblems.
           </p>
         </article>
         <article class="card">
-          <h3 class="card__title">3. Video-Call Pressure</h3>
+          <h3 class="card__title">3. Fear &amp; Artificial Urgency</h3>
           <p class="card__text">
-            Victims are instructed to keep their camera on continuously on messaging or video apps, sometimes in front of a fake police-station backdrop.
+            Scammers cite serious offences such as money laundering or narcotics trafficking and insist you must settle or "verify" immediately before police arrive at your door.
           </p>
         </article>
         <article class="card">
-          <h3 class="card__title">4. Secrecy Instructions</h3>
+          <h3 class="card__title">4. Video-Call Pressure &amp; Surveillance</h3>
           <p class="card__text">
-            Scammers forbid you from speaking to family, friends, or bank staff—claiming the investigation is confidential—to prevent a reality check.
+            Victims are told to stay continuously on Skype or WhatsApp video—sometimes facing a staged police-station backdrop—and forbidden from disconnecting the call.
           </p>
         </article>
         <article class="card">
-          <h3 class="card__title">5. 'Safe-Account' Transfers</h3>
+          <h3 class="card__title">5. Secrecy &amp; Isolation Instructions</h3>
           <p class="card__text">
-            You are pressured to move savings into a "RBI verification" or "government safe" account with the promise it will be refunded after clearance.
+            They instruct you to lock your room and not tell family, friends, or bank staff under the pretext of a "confidential national-security inquiry" so nobody can warn you.
           </p>
         </article>
         <article class="card">
-          <h3 class="card__title">6. Isolation &amp; Exhaustion</h3>
+          <h3 class="card__title">6. 'Safe-Account' Payment Scams</h3>
           <p class="card__text">
-            Long calls wear down judgement. Hanging up and verifying independently with family or local police immediately breaks their control.
+            Finally, they demand you transfer funds to an "RBI verification", "escrow", or "government safe" account, falsely promising a refund once your account is cleared.
+          </p>
+        </article>
+      </div>
+
+      <div class="section__header section__header--spaced">
+        <h2 class="section__title">The Three-Stage Psychological Manipulation Cycle</h2>
+        <p class="section__subtitle">
+          Research on digital-arrest coercion highlights three connected stages used to overwhelm rational verification:
+        </p>
+      </div>
+
+      <div class="grid grid--3">
+        <article class="card">
+          <span class="card__tag">Stage 1: Initiation</span>
+          <h3 class="card__title">Authority Trigger</h3>
+          <p class="card__text">
+            An unexpected call uses official titles, case numbers, or your name/phone details to trigger shock and deference to authority.
+          </p>
+        </article>
+        <article class="card">
+          <span class="card__tag">Stage 2: Manipulation</span>
+          <h3 class="card__title">Fear, Urgency &amp; Isolation</h3>
+          <p class="card__text">
+            Continuous video surveillance, threats of arrest, and strict secrecy prevent you from pausing to speak with family or real authorities.
+          </p>
+        </article>
+        <article class="card">
+          <span class="card__tag">Stage 3: Compliance</span>
+          <h3 class="card__title">Financial Extraction</h3>
+          <p class="card__text">
+            Exhausted and frightened victims are guided to break fixed deposits or send UPI/RTGS transfers to "prove innocence" or fund a "safe account".
           </p>
         </article>
       </div>
     </div>
   </section>
 
-  <section class="section section--tinted" aria-labelledby="checklist-placeholder-heading">
-    <div class="container">
-      <div class="card">
-        <span class="badge badge--info">Phase 4 — Under Development</span>
-        <h2 id="checklist-placeholder-heading" class="card__title card__title--spaced">
-          Interactive Digital-Arrest Call Checklist
-        </h2>
-        <p class="card__text">
-          In Phase 4, this section will allow you to check off warning signs observed during a call and receive a calm, tailored advisory explanation and immediate action plan.
-        </p>
-        <div class="card__actions">
-          <a class="btn btn--primary" href="{{ url_for('main.after_scam') }}">Need Immediate Help? Go to After-Scam Steps</a>
+  <section class="section section--tinted" id="call-checklist" aria-labelledby="checklist-heading">
+    <div class="container layout-split">
+      <div class="layout-split__main">
+        <div class="section__header">
+          <span class="eyebrow">Interactive Tool</span>
+          <h2 id="checklist-heading" class="section__title">Digital-Arrest Call Checklist</h2>
+          <p class="section__subtitle">
+            Tick any warning signs happening on a suspicious call or chat to receive a calm, plain-language advisory assessment.
+          </p>
         </div>
+
+        {% if checklist_result %}
+          <section class="result-panel" id="checklist-result" aria-labelledby="checklist-result-heading">
+            <div class="result-panel__header">
+              <div>
+                <span class="eyebrow">Checklist Advisory ({{ checklist_result.selected_count }} sign{{ '' if checklist_result.selected_count == 1 else 's' }} selected)</span>
+                <h3 id="checklist-result-heading" class="result-panel__title">
+                  <span class="badge badge--{{ checklist_result.badge_kind }}">{{ checklist_result.headline }}</span>
+                </h3>
+              </div>
+            </div>
+
+            <p class="result-panel__summary">{{ checklist_result.summary }}</p>
+
+            {% if checklist_result.selected_items %}
+              <div class="result-block">
+                <h4 class="result-block__title">Why These Warning Signs Matter</h4>
+                <ul class="indicator-list">
+                  {% for item in checklist_result.selected_items %}
+                    <li class="indicator-item">
+                      <div class="indicator-item__head">
+                        <strong class="indicator-item__title">{{ item.tactic }}</strong>
+                        <span class="badge badge--{{ 'urgent' if item.severity == 'critical' else 'caution' }}">
+                          {{ item.severity | upper }}
+                        </span>
+                      </div>
+                      <p class="indicator-item__text">{{ item.explanation }}</p>
+                      <p class="indicator-item__text"><strong>What to do:</strong> {{ item.action }}</p>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            <div class="result-block">
+              <h4 class="result-block__title">Calm Immediate Steps</h4>
+              <ul class="plain-list">
+                {% for step in checklist_result.immediate_steps %}
+                  <li>{{ step }}</li>
+                {% endfor %}
+              </ul>
+
+              <div class="result-block__links">
+                <a class="btn btn--primary" href="{{ url_for('main.after_scam') }}">Open After-Scam Assistance (1930 &amp; Evidence Steps)</a>
+                <a class="btn btn--secondary" href="{{ url_for('analyzer.message_analyser') }}">Analyse a Related Message</a>
+              </div>
+            </div>
+
+            <p class="form-hint">{{ checklist_result.advisory_note }}</p>
+          </section>
+        {% endif %}
+
+        <form class="panel-form" method="post" action="{{ url_for('main.digital_arrest') }}#call-checklist">
+          <fieldset class="form-fieldset">
+            <legend class="form-legend">Select any warning signs you observed:</legend>
+            <div class="checklist-options">
+              {% for item in checklist_items %}
+                <label class="checklist-option">
+                  <input
+                    type="checkbox"
+                    name="signs"
+                    value="{{ item.id }}"
+                    {% if item.id in selected_ids %}checked{% endif %}
+                  >
+                  <span>
+                    <strong>{{ item.tactic }}:</strong> {{ item.label }}
+                  </span>
+                </label>
+              {% endfor %}
+            </div>
+          </fieldset>
+
+          <div class="form-actions form-actions--wrap">
+            <button type="submit" class="btn btn--primary">Assess Selected Warning Signs</button>
+            <a class="btn btn--quiet" href="{{ url_for('main.digital_arrest') }}#call-checklist">Reset Checklist</a>
+          </div>
+        </form>
       </div>
+
+      <aside class="layout-split__side">
+        {{ privacy_notice(
+          title="Checklist Privacy & Support",
+          items=[
+            "Your checklist selections are evaluated strictly in memory and never stored.",
+            "If you are currently on a pressured video call, you can disconnect immediately—hanging up is always safe.",
+            "Never pay anyone claiming they can clear a digital warrant or verify your savings."
+          ]
+        ) }}
+
+        <div class="card">
+          <h3 class="card__title">Got a Suspicious Notice or Text?</h3>
+          <p class="card__text">
+            Paste any WhatsApp, SMS, or email text sent by the caller into the Message Analyser for a breakdown of coercion indicators.
+          </p>
+          <div class="card__actions">
+            <a class="btn btn--secondary" href="{{ url_for('analyzer.message_analyser') }}">Open Message Analyser</a>
+          </div>
+        </div>
+      </aside>
     </div>
   </section>
 

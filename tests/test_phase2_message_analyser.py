@@ -107,7 +107,7 @@ def test_flask_post_message_analyser_page(client):
     html = res.get_data(as_text=True)
     assert "Strong scam signs" in html
     assert "Advisory &amp; Privacy Notice" in html
-    assert "Open Digital-Arrest Guidance" in html
+    assert "Open Digital-Arrest Call Checklist" in html
 
 
 def test_flask_post_message_analyser_validation_error(client):

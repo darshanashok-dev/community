@@ -1,0 +1,61 @@
+{
+  "version": "1.0.0",
+  "checklist_items": [
+    {
+      "id": "authority_claim",
+      "label": "The caller claims to be from Police, CBI, ED, Customs, Narcotics, TRAI, RBI, or a court.",
+      "tactic": "Authority Impersonation",
+      "severity": "high",
+      "explanation": "Scammers rely on respected government and law-enforcement names (and often show fake uniforms or forged IDs) to override calm judgement.",
+      "action": "Do not trust caller IDs, logos, or PDF notices sent on messaging apps. Verify independently through official local police or published agency portals."
+    },
+    {
+      "id": "parcel_or_aadhaar_claim",
+      "label": "They say your Aadhaar, PAN, SIM card, bank account, or a courier parcel is linked to a crime or money laundering.",
+      "tactic": "Fear & Legal Intimidation",
+      "severity": "high",
+      "explanation": "False claims of illegal parcels, narcotics, or PMLA money-laundering cases are scripted to create sudden panic.",
+      "action": "Real investigations do not begin with threats over an unsolicited call or demand instant compliance to prove innocence."
+    },
+    {
+      "id": "arrest_threat",
+      "label": "They mention 'digital arrest', an immediate arrest warrant, or police coming unless you cooperate right now.",
+      "tactic": "Fake Arrest Threats",
+      "severity": "critical",
+      "explanation": "There is no legal concept of 'digital arrest' in India. Law enforcement does not hold people under arrest via phone or video calls.",
+      "action": "Hang up immediately. Real warrants and summons are served through lawful, verifiable offline procedures."
+    },
+    {
+      "id": "video_call_pressure",
+      "label": "They insist you join or stay on a continuous video call (WhatsApp, Skype, etc.) and forbid disconnecting.",
+      "tactic": "Video-Call Manipulation",
+      "severity": "critical",
+      "explanation": "Keeping your camera on and refusing to let you hang up exhausts your critical thinking and isolates you from help.",
+      "action": "End the call right away and turn off your camera—simply disconnecting breaks the scammer's control."
+    },
+    {
+      "id": "secrecy_demand",
+      "label": "They tell you to stay alone, lock the door, or not tell family, friends, or bank staff.",
+      "tactic": "Secrecy & Isolation",
+      "severity": "critical",
+      "explanation": "Secrecy is demanded because anyone outside the call—a relative, friend, or bank teller—will quickly recognise the scam.",
+      "action": "Immediately speak to a trusted family member, neighbour, or local police station."
+    },
+    {
+      "id": "safe_account_transfer",
+      "label": "They ask you to transfer money to a 'safe account', 'RBI verification account', or pay a 'refundable deposit/bail'.",
+      "tactic": "Safe-Account Payment Scam",
+      "severity": "critical",
+      "explanation": "No court, RBI office, or police agency ever asks citizens to transfer savings into another account to 'verify' funds or clear charges.",
+      "action": "Never transfer any money, make a UPI payment, or share banking details for 'verification'."
+    },
+    {
+      "id": "otp_or_remote_app",
+      "label": "They ask for OTPs, PINs, Aadhaar/PAN photos, or ask you to install a screen-sharing/remote-access app.",
+      "tactic": "Credential & Device Takeover",
+      "severity": "high",
+      "explanation": "OTPs, PINs, and apps such as AnyDesk or TeamViewer give scammers direct access to drain accounts.",
+      "action": "Do not share any codes or install apps on a caller's instruction."
+    }
+  ]
+}
