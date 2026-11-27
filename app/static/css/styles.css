@@ -337,6 +337,13 @@ a:hover {
 }
 
 /* Cards & Components */
+.card,
+.result-panel,
+.banner,
+.notice-box {
+  overflow-wrap: anywhere;
+}
+
 .card {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);

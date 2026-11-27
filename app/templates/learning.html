@@ -104,7 +104,7 @@
           </div>
 
           <div class="result-block__links">
-            <a class="btn btn--primary" href="{{ url_for('main.learning') }}#quiz">Retry Quiz</a>
+            <a class="btn btn--primary" href="{{ url_for('main.learning', reset=1) }}#quiz">Retry Quiz</a>
           </div>
         </section>
       {% endif %}
@@ -133,7 +133,7 @@
 
         <div class="form-actions form-actions--wrap">
           <button type="submit" class="btn btn--primary">Submit Quiz Answers</button>
-          <a class="btn btn--quiet" href="{{ url_for('main.learning') }}#quiz">Reset / Retry Quiz</a>
+          <a class="btn btn--quiet" href="{{ url_for('main.learning', reset=1) }}#quiz">Reset / Retry Quiz</a>
         </div>
       </form>
     </div>

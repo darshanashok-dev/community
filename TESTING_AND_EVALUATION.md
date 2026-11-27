@@ -35,6 +35,11 @@ Test modules:
    ```
    - Outputs Precision, Recall, F1-score, FPR (`FP/(FP+TN)`), FNR (`FN/(FN+TP)`), confusion matrix, class counts, average/p95 response time, and side-by-side comparison with the naive keyword-only baseline.
    - **Honest status:** The repository includes 24 clearly labelled `synthetic_dev` smoke samples (`evaluation/synthetic_smoke_samples.csv`) to verify the evaluation pipeline. Genuine 300+ field/public evaluation data has not been fabricated.
+- **Latest Synthetic Smoke Pipeline Run (`threshold=31`, rules SHA-256 `4144c0418c3dce580c0a61e7220518f387c81b8e10f8f777b61ed0e618ddea32`):**
+  - Contextual rule engine (`24` synthetic_dev messages: `12` scam, `12` benign): `TP=12, FP=0, TN=12, FN=0`, `Precision=1.0`, `Recall=1.0`, `F1=1.0`, `FPR=0.0`, `FNR=0.0`, `avg_response_ms=1.5224`, `p95_response_ms=0.92`.
+  - Keyword-only baseline (`24` synthetic_dev messages): `TP=12, FP=9, TN=3, FN=0`, `Precision=0.5714`, `Recall=1.0`, `F1=0.7273`, `FPR=0.75`, `FNR=0.0`.
+  - Template-grouped 70/30 split: `Dev=16`, `Test=8`, zero template-group overlap, Cohen's kappa `1.0`.
+  - *Note:* These numbers verify script correctness on synthetic development examples only; **genuine 300+ held-out evaluation remains PENDING**.
 
 ## 3. Voluntary Usability Evaluation (`evaluation/USABILITY_STUDY_PROTOCOL.md`)
 

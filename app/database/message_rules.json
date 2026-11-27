@@ -39,6 +39,7 @@
         "\\b(?:cbi|central bureau of investigation|enforcement directorate|narcotics control bureau|ncb|cyber\\s*crime\\s*(?:cell|police|dept|department)|crime branch|income tax (?:officer|dept|department)|customs (?:officer|department|authority))\\b",
         "\\b(?:trai|telecom regulatory|department of telecommunications|dot|rbi officer|reserve bank officer|supreme court|high court|magistrate)\\b",
         "\\b(?:kyc (?:dept|department|desk|team|verification)|customer care executive|bank verification officer|parcel clearance officer)\\b",
+        "\\b(?:sbi|hdfc|icici|axis|pnb|kotak|bank)\\s*kyc\\s*(?:is\\s*)?(?:pending|expired|suspended|blocked|verification)\\b",
         "\\b(?:calling from|speaking from|official notice from|department notice|police headquarters)\\b"
       ],
       "why_it_matters": "Scammers frequently claim to be police, CBI, customs, TRAI, RBI, or bank verification officers to gain instant obedience and credibility.",
@@ -122,7 +123,10 @@
       "weight": 24,
       "patterns": [
         "(?<!do not )(?<!don't )(?<!never )(?<!not to )\\b(?:share|tell|send|forward|give|provide|confirm|dictate)\\s*(?:me\\s*|us\\s*)?(?:your\\s*|the\\s*)?(?:otp|one[- ]time\\s*password|upi\\s*pin|atm\\s*pin|mpin|cvv|password|passcode)\\b",
-        "\\b(?:enter|submit|type)\\s*(?:your\\s*)?(?:otp|pin|cvv|password|mpin)\\s*(?:here|below|on\\s*this\\s*(?:link|page|form)|to\\s*(?:verify|unblock|claim))\\b"
+        "(?<!do not )(?<!don't )(?<!never )\\b(?:enter|submit|type)\\s*(?:your\\s*|the\\s*)?(?:otp|pin|cvv|password|mpin)\\b"
+      ],
+      "negative_patterns": [
+        "\\bshare\\s*(?:this\\s*)?(?:otp|pin|code)\\s*(?:\\d+\\s*)?with\\s*(?:the\\s*)?delivery\\s*(?:agent|partner|executive)\\s*(?:only\\s*)?(?:at\\s*doorstep|upon\\s*delivery|when\\s*receiving)\\b"
       ],
       "why_it_matters": "Legitimate banks, police, and delivery partners never ask you to tell, forward, or enter your OTP or UPI PIN on unknown links.",
       "category_tag": "Credential Theft"

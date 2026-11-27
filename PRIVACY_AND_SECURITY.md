@@ -44,3 +44,14 @@ External lookups run **only** when the user explicitly checks the consent checkb
 - No APK upload, execution, or malware classification.
 - No live call monitoring or WhatsApp client integration.
 - Scores (`0–100`) are weighted rule indicators, not calibrated probabilities, and never certify safety.
+
+## 4. Independent Security & Privacy Audit Findings (Task 4)
+
+- **Verified Controls:**
+  - Confirmed in-memory transient handling of messages and URLs (zero writes to SQLite, disk, or logs; raw inputs not echoed in HTML).
+  - Confirmed SQLite `content.db` stores only static `android_permissions`, `lessons`, and `quiz_questions` tables using parameterized `?` queries.
+  - Confirmed `DEBUG = False` by default in `config.py` and `.env`, `.env` listed in `.gitignore`, and `SAFE_BROWSING_API_KEY` never exposed in JS, templates, or logs.
+  - Confirmed Jinja2 auto-escaping (no `|safe`), zero `innerHTML`/`eval` in JS, strict CSP/COOP/CORP/X-Frame-Options/Referrer-Policy/No-Store headers, `InMemoryRateLimiter` (`429`), and payload caps (`64 KB`, `5000` chars, `2048` chars).
+  - Confirmed RDAP SSRF guard blocks non-HTTPS, non-`443` ports, userinfo, private/loopback/link-local/reserved IPs, and submitted URLs are never visited.
+- **Audit Scope Note:** This audit targets privacy-first local academic execution and does not constitute formal security or WCAG 2.2 AA certification.
+

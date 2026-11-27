@@ -195,7 +195,7 @@
     "brand_in_subdomain": 30,
     "lookalike_domain": 30,
     "excessive_subdomains": 16,
-    "shortener_unverified": 24,
+    "shortener_unverified": 32,
     "suspicious_path_keywords": 18,
     "apk_download_hint": 32,
     "obfuscated_encoding": 20,

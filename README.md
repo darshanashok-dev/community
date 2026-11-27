@@ -113,6 +113,8 @@ python evaluation/evaluate_detection.py --input evaluation/synthetic_smoke_sampl
 - [TESTING_AND_EVALUATION.md](TESTING_AND_EVALUATION.md) — Automated tests, dataset evaluation protocol, and usability study plan
 - [DEMO_GUIDE.md](DEMO_GUIDE.md) — 10-step academic demonstration script with fictional inputs
 - [SECURITY_AUDIT_PHASE6.md](SECURITY_AUDIT_PHASE6.md) — Phase 6 security, dependency, and accessibility review
+- [FINAL_PROJECT_REPORT.md](FINAL_PROJECT_REPORT.md) — Final academic project report (23 sections + Mermaid diagrams + honest evaluation status)
+- [community_project_ppt_updated.pptx](community_project_ppt_updated.pptx) — Updated 22-slide final review & viva presentation
 
 ## Known Limitations
 
