@@ -2,14 +2,14 @@
 
 A locally runnable, privacy-conscious Flask web application developed as an academic community project (RNS Institute of Technology, Dept. of CSE).
 
-## Current Status: Phase 1 — Project Foundation and Frontend
+## Current Status: Phase 2 — Phishing & Digital-Arrest Message Analyser
 
-Implemented in Phase 1:
+Implemented through Phase 2:
 - Modular Flask application factory (`app/`) and environment-based configuration (`config.py`)
 - Security headers, `DEBUG=False` default, and privacy-aware request logging
 - Accessible, responsive HTML5/CSS3/Vanilla JS frontend covering all planned pages:
   - Home (`/`)
-  - Message Analyser (`/message-analyser`) — marked *Phase 2 Under Development*
+  - Message Analyser (`/message-analyser` and `POST /api/analyze-message`) — active in-memory contextual rule engine with explainable 0–100 scoring, benign-context false-positive reduction, and recommended actions
   - URL Analyser (`/url-analyser`) — marked *Phase 3 Under Development*
   - Digital-Arrest Awareness (`/digital-arrest`)
   - After-Scam Assistance (`/after-scam`)

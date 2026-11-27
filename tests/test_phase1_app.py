@@ -16,7 +16,7 @@ def client():
     "path, expected_text",
     [
         ("/", "Public Cybersecurity Awareness"),
-        ("/message-analyser", "Phase 2 — Under Development"),
+        ("/message-analyser", "Phishing &amp; Digital-Arrest Message Analyser"),
         ("/url-analyser", "Phase 3 — Under Development"),
         ("/digital-arrest", "Recognising Digital-Arrest Scams"),
         ("/after-scam", "You are not to blame."),
@@ -41,7 +41,7 @@ def test_all_phase1_pages_load_successfully(client, path, expected_text):
 def test_health_endpoint(client):
     response = client.get("/health")
     assert response.status_code == 200
-    assert response.get_json() == {"status": "ok", "phase": 1}
+    assert response.get_json() == {"status": "ok", "phase": 2}
 
 
 def test_404_error_page(client):

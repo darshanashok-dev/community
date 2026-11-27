@@ -1,0 +1,263 @@
+{
+  "version": "1.0.0",
+  "score_bounds": {
+    "min": 0,
+    "max": 100
+  },
+  "categories": [
+    {
+      "id": "no_known_red_flags",
+      "label": "No known red flags",
+      "min_score": 0,
+      "max_score": 30,
+      "badge_kind": "calm",
+      "summary": "No strong phishing or coercion patterns matched our current rules. This is advisory only and never proves a message is safe."
+    },
+    {
+      "id": "some_warning_signs",
+      "label": "Some warning signs",
+      "min_score": 31,
+      "max_score": 65,
+      "badge_kind": "caution",
+      "summary": "Some warning signs were found. Verify independently using official apps, printed card helplines, or trusted contacts before taking action."
+    },
+    {
+      "id": "strong_scam_signs",
+      "label": "Strong scam signs",
+      "min_score": 66,
+      "max_score": 100,
+      "badge_kind": "urgent",
+      "summary": "Multiple high-risk scam or coercion indicators matched together. Do not pay, share OTPs/credentials, or stay on a pressure call."
+    }
+  ],
+  "rules": [
+    {
+      "id": "impersonation",
+      "title": "Authority or Official Impersonation",
+      "weight": 18,
+      "patterns": [
+        "\\b(?:cbi|central bureau of investigation|enforcement directorate|narcotics control bureau|ncb|cyber\\s*crime\\s*(?:cell|police|dept|department)|crime branch|income tax (?:officer|dept|department)|customs (?:officer|department|authority))\\b",
+        "\\b(?:trai|telecom regulatory|department of telecommunications|dot|rbi officer|reserve bank officer|supreme court|high court|magistrate)\\b",
+        "\\b(?:kyc (?:dept|department|desk|team|verification)|customer care executive|bank verification officer|parcel clearance officer)\\b",
+        "\\b(?:calling from|speaking from|official notice from|department notice|police headquarters)\\b"
+      ],
+      "why_it_matters": "Scammers frequently claim to be police, CBI, customs, TRAI, RBI, or bank verification officers to gain instant obedience and credibility.",
+      "category_tag": "Impersonation"
+    },
+    {
+      "id": "arrest_threat",
+      "title": "Arrest or Detention Threat",
+      "weight": 28,
+      "patterns": [
+        "\\bdigital\\s*arrest\\b",
+        "\\b(?:arrest\\s*warrant|non[- ]?bailable\\s*warrant|warrant\\s*(?:is\\s*)?issued|warrant\\s*against\\s*you)\\b",
+        "\\b(?:immediate\\s*arrest|will\\s*be\\s*arrested|under\\s*(?:custody|surveillance|investigation)|police\\s*(?:raid|team)\\s*(?:is\\s*)?(?:on\\s*the\\s*way|dispatched))\\b"
+      ],
+      "why_it_matters": "Indian law enforcement does not conduct 'digital arrests' or issue arrest threats via WhatsApp, SMS, or informal calls.",
+      "category_tag": "Digital Arrest"
+    },
+    {
+      "id": "legal_intimidation",
+      "title": "Legal & Criminal Intimidation",
+      "weight": 22,
+      "patterns": [
+        "\\b(?:money\\s*laundering|pmla|terror\\s*funding|illegal\\s*parcel|contraband|drugs\\s*found|mdma|narcotics\\s*parcel)\\b",
+        "\\b(?:fir\\s*(?:registered|filed|lodged)|criminal\\s*(?:case|charges|prosecution)|court\\s*summons|legal\\s*action\\s*will\\s*be\\s*taken)\\b",
+        "\\b(?:aadhaar|pan|sim\\s*card|bank\\s*account)\\s*(?:has\\s*been\\s*|is\\s*)?(?:misused|linked\\s*to\\s*(?:crime|fraud|laundering)|blocked\\s*for\\s*illegal)\\b"
+      ],
+      "why_it_matters": "Fabricated accusations of money laundering, illegal parcels, or misused Aadhaar/SIM cards are designed to trigger panic so victims stop verifying.",
+      "category_tag": "Intimidation"
+    },
+    {
+      "id": "secrecy",
+      "title": "Secrecy & Isolation Instruction",
+      "weight": 22,
+      "patterns": [
+        "\\b(?:do\\s*not|don'?t|never)\\s*(?:tell|inform|discuss|share\\s*(?:this|anything)\\s*with)\\s*(?:anyone|anybody|family|friends|relatives|bank|local\\s*police)\\b",
+        "\\b(?:strictly\\s*confidential|confidential\\s*investigation|national\\s*security\\s*matter|gag\\s*order)\\b",
+        "\\b(?:stay\\s*(?:alone|in\\s*a\\s*closed\\s*room)|lock\\s*the\\s*door|nobody\\s*must\\s*know)\\b"
+      ],
+      "why_it_matters": "Scammers demand secrecy so family members, friends, or bank staff cannot warn you that the story is fake.",
+      "category_tag": "Digital Arrest"
+    },
+    {
+      "id": "video_call_pressure",
+      "title": "Video-Call Surveillance Pressure",
+      "weight": 22,
+      "patterns": [
+        "\\b(?:stay\\s*on|remain\\s*on|join\\s*on)\\s*(?:the\\s*)?(?:video\\s*call|skype|whatsapp\\s*video|zoom|google\\s*meet)\\b",
+        "\\b(?:do\\s*not|don'?t)\\s*(?:disconnect|cut|end|hang\\s*up)\\s*(?:the\\s*)?(?:call|video)\\b",
+        "\\b(?:keep\\s*(?:your\\s*)?camera\\s*on|online\\s*interrogation|video\\s*statement|24\\s*hour(?:s)?\\s*monitoring)\\b"
+      ],
+      "why_it_matters": "Forcing victims to stay continuously on video calls isolates them mentally and prevents them from contacting real authorities.",
+      "category_tag": "Digital Arrest"
+    },
+    {
+      "id": "safe_account",
+      "title": "Fake 'Safe-Account' Transfer Claim",
+      "weight": 30,
+      "patterns": [
+        "\\b(?:safe\\s*account|rbi\\s*verification\\s*account|government\\s*(?:verification|escrow|custody)\\s*account|supreme\\s*court\\s*account)\\b",
+        "\\b(?:transfer|deposit|send)\\s*(?:funds|money|balance|amount)?\\s*(?:to|into)\\s*(?:a\\s*)?(?:verification|escrow|audit|clearance)\\s*account\\b",
+        "\\b(?:refundable\\s*(?:security\\s*)?deposit|verification\\s*transfer|will\\s*be\\s*refunded\\s*after\\s*(?:clearance|verification|investigation))\\b"
+      ],
+      "why_it_matters": "No government agency, court, or RBI account ever holds personal savings for 'verification' or 'clearance'. Money sent to these accounts is stolen.",
+      "category_tag": "Financial Coercion"
+    },
+    {
+      "id": "payment_demand",
+      "title": "Urgent Payment or Fee Demand",
+      "weight": 20,
+      "patterns": [
+        "\\b(?:pay|transfer|send|deposit)\\s*(?:the\\s*)?(?:fine|penalty|bail|settlement|clearance\\s*fee|processing\\s*fee|customs\\s*duty|tax)\\b",
+        "\\b(?:scan\\s*(?:this|the)\\s*qr\\s*(?:code)?\\s*(?:to\\s*)?(?:receive|claim|verify)|enter\\s*(?:your\\s*)?upi\\s*pin\\s*to\\s*(?:receive|claim))\\b",
+        "\\b(?:pay\\s*(?:now|immediately)|transfer\\s*(?:now|immediately)|send\\s*(?:via|through)\\s*(?:upi|neft|rtgs|imps|gift\\s*card))\\b"
+      ],
+      "why_it_matters": "Pressuring for immediate transfers, penalties, or scanning QR codes/entering UPI PINs to 'receive' money is a classic fraud indicator.",
+      "category_tag": "Financial Demand"
+    },
+    {
+      "id": "otp_password_request",
+      "title": "Request to Share OTP, PIN, or Password",
+      "weight": 24,
+      "patterns": [
+        "(?<!do not )(?<!don't )(?<!never )(?<!not to )\\b(?:share|tell|send|forward|give|provide|confirm|dictate)\\s*(?:me\\s*|us\\s*)?(?:your\\s*|the\\s*)?(?:otp|one[- ]time\\s*password|upi\\s*pin|atm\\s*pin|mpin|cvv|password|passcode)\\b",
+        "\\b(?:enter|submit|type)\\s*(?:your\\s*)?(?:otp|pin|cvv|password|mpin)\\s*(?:here|below|on\\s*this\\s*(?:link|page|form)|to\\s*(?:verify|unblock|claim))\\b"
+      ],
+      "why_it_matters": "Legitimate banks, police, and delivery partners never ask you to tell, forward, or enter your OTP or UPI PIN on unknown links.",
+      "category_tag": "Credential Theft"
+    },
+    {
+      "id": "sensitive_info_request",
+      "title": "Request for Sensitive IDs or Remote Access",
+      "weight": 20,
+      "patterns": [
+        "\\b(?:share|send|upload|submit|verify)\\s*(?:your\\s*)?(?:aadhaar|pan\\s*card|debit\\s*card|credit\\s*card|card\\s*number|bank\\s*details|net\\s*banking)\\b",
+        "\\b(?:install|download)\\s*(?:anydesk|teamviewer|quicksupport|rustdesk|airdroid|screen\\s*share\\s*app|apk)\\b",
+        "\\b(?:share\\s*your\\s*screen|remote\\s*access|update\\s*(?:your\\s*)?kyc\\s*(?:via|on|through)\\s*(?:this\\s*)?(?:link|url|form))\\b"
+      ],
+      "why_it_matters": "Sending Aadhaar/PAN/card images or installing remote-access apps allows attackers to take over banking sessions and steal identity documents.",
+      "category_tag": "Credential & Access"
+    },
+    {
+      "id": "strong_urgency",
+      "title": "High-Pressure Urgency & Account Threat",
+      "weight": 14,
+      "patterns": [
+        "\\b(?:within\\s*\\d+\\s*(?:min|mins|minute|minutes|hr|hrs|hour|hours)|before\\s*midnight|today\\s*only|final\\s*(?:warning|notice)|last\\s*chance)\\b",
+        "\\b(?:account|card|sim|number|kyc|service)\\s*(?:will\\s*be|is\\s*about\\s*to\\s*be|gets?)\\s*(?:blocked|suspended|deactivated|frozen|disconnected|closed|terminated)\\b",
+        "\\b(?:act\\s*immediately|urgent\\s*action\\s*required|respond\\s*immediately\\s*to\\s*avoid)\\b"
+      ],
+      "why_it_matters": "Artificial deadlines and threats of sudden account or SIM suspension push people to act before checking official channels.",
+      "category_tag": "Urgency"
+    },
+    {
+      "id": "mild_urgency_keyword",
+      "title": "Standalone Urgency Phrasing",
+      "weight": 8,
+      "patterns": [
+        "\\b(?:urgent|urgently|asap)\\b"
+      ],
+      "skip_if_matched": ["strong_urgency"],
+      "why_it_matters": "Urgency words appear in both legitimate alerts and scams; on their own they carry low weight unless paired with threats, links, or demands.",
+      "category_tag": "Context Cue"
+    },
+    {
+      "id": "isolated_otp_mention",
+      "title": "Isolated OTP Mention (Low Weight)",
+      "weight": 5,
+      "patterns": [
+        "\\b(?:otp|one[- ]time\\s*password)\\b"
+      ],
+      "skip_if_matched": ["otp_password_request"],
+      "skip_if_benign": ["benign_protective_otp"],
+      "why_it_matters": "Mentioning 'OTP' alone is common in routine logins and deliveries and does not indicate a scam without a request to share it or click an untrusted link.",
+      "category_tag": "Context Cue"
+    },
+    {
+      "id": "suspicious_link_or_contact",
+      "title": "Action Link or Unverified Contact Prompt",
+      "weight": 12,
+      "patterns": [
+        "https?://\\S+",
+        "\\b(?:bit\\.ly|tinyurl\\.com|t\\.co|goo\\.gl|rb\\.gy|cutt\\.ly|is\\.gd|shorturl\\.at)/\\S+",
+        "\\b(?:call|whatsapp|contact)\\s*(?:on|at)?\\s*(?:\\+?91[- ]?)?[6-9]\\d{9}\\b"
+      ],
+      "why_it_matters": "Scammers embed look-alike URLs, shortened links, or personal mobile numbers in official-sounding texts to divert victims away from real helplines.",
+      "category_tag": "Link / Contact"
+    }
+  ],
+  "combinations": [
+    {
+      "id": "combo_digital_arrest",
+      "title": "Digital-Arrest Coercion Pattern",
+      "weight": 20,
+      "min_matches": 2,
+      "required_any": [
+        "arrest_threat",
+        "legal_intimidation",
+        "secrecy",
+        "video_call_pressure",
+        "safe_account"
+      ],
+      "or_impersonation_plus_one": [
+        "arrest_threat",
+        "secrecy",
+        "video_call_pressure",
+        "safe_account"
+      ],
+      "why_it_matters": "Combining authority claims, arrest/legal fear, secrecy, video-call pressure, or safe-account demands strongly matches documented digital-arrest scam scripts."
+    },
+    {
+      "id": "combo_credential_phishing",
+      "title": "Urgent Credential or Payment Phishing Pattern",
+      "weight": 18,
+      "group_a_any": ["impersonation", "suspicious_link_or_contact"],
+      "group_b_any": ["otp_password_request", "sensitive_info_request", "payment_demand"],
+      "group_c_any": ["strong_urgency", "mild_urgency_keyword"],
+      "why_it_matters": "Combining urgency with a link/impersonation and a demand for OTPs, sensitive IDs, or payment is a classic phishing pattern."
+    },
+    {
+      "id": "combo_unofficial_channel_coercion",
+      "title": "Coercive Legal/Account Claim via Messaging Channel",
+      "weight": 8,
+      "channels": ["sms", "whatsapp"],
+      "required_any": ["arrest_threat", "legal_intimidation", "safe_account"],
+      "why_it_matters": "Genuine courts, police, and regulators do not serve arrest orders or demand verification transfers over SMS or WhatsApp."
+    }
+  ],
+  "benign_contexts": [
+    {
+      "id": "benign_protective_otp",
+      "title": "Protective Anti-Sharing OTP Notice",
+      "offset": -10,
+      "patterns": [
+        "\\b(?:do\\s*not|don'?t|never)\\s*share\\s*(?:your\\s*|this\\s*|the\\s*)?(?:otp|pin|cvv|password|mpin|code)\\b",
+        "\\b(?:otp\\s*(?:is|for)\\s*(?:valid\\s*for\\s*\\d+|login|transaction))\\b"
+      ],
+      "blocked_by": ["arrest_threat", "legal_intimidation", "secrecy", "video_call_pressure", "safe_account", "otp_password_request"],
+      "explanation": "Contains standard security wording advising you not to share your OTP."
+    },
+    {
+      "id": "benign_bank_upi_receipt",
+      "title": "Routine Bank / UPI Transaction Notification",
+      "offset": -10,
+      "patterns": [
+        "\\b(?:credited\\s*(?:to|with)|debited\\s*(?:from|by)|avl\\.?\\s*bal|available\\s*balance|upi\\s*(?:ref|txn|id))\\b",
+        "\\b(?:a/c\\s*(?:xx|no\\.?\\s*x+)[0-9x]+|if\\s*not\\s*(?:done\\s*)?by\\s*you)\\b"
+      ],
+      "blocked_by": ["arrest_threat", "legal_intimidation", "secrecy", "video_call_pressure", "safe_account", "otp_password_request", "payment_demand", "sensitive_info_request"],
+      "explanation": "Matches routine transactional receipt language without credential or payment coercion."
+    },
+    {
+      "id": "benign_delivery_update",
+      "title": "Routine Delivery Status Notification",
+      "offset": -8,
+      "patterns": [
+        "\\b(?:out\\s*for\\s*delivery|arriving\\s*today|has\\s*been\\s*delivered|delivery\\s*(?:partner|agent)|track\\s*(?:on|via)\\s*official\\s*app|awb\\s*no)\\b"
+      ],
+      "blocked_by": ["arrest_threat", "legal_intimidation", "secrecy", "video_call_pressure", "safe_account", "otp_password_request", "payment_demand", "sensitive_info_request"],
+      "explanation": "Matches ordinary parcel status wording without payment demands or intimidation."
+    }
+  ]
+}

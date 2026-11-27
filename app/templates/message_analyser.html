@@ -8,50 +8,164 @@
     title="Phishing & Digital-Arrest Message Analyser",
     subtitle="Inspect pasted SMS, WhatsApp, or email text for contextual phishing and coercion indicators.",
     eyebrow="Module B — Message Analysis",
-    status_badge={"kind": "info", "label": "Phase 2 — Under Development"}
+    status_badge={"kind": "calm", "label": "Phase 2 — Active (In-Memory Rule Engine)"}
   ) }}
 
   <section class="section">
     <div class="container layout-split">
       <div class="layout-split__main">
-        {{ status_banner(
-          kind="info",
-          title="Analysis Engine Scheduled for Phase 2",
-          message="This page currently presents the planned interface and privacy boundaries. Automated contextual rule scoring is not yet active, and no simulated or placeholder verdicts are generated."
-        ) }}
+        {% if error_message %}
+          {{ status_banner(
+            kind="urgent",
+            title="Input Validation Notice",
+            message=error_message,
+            role="alert"
+          ) }}
+        {% endif %}
 
-        <form class="panel-form" aria-describedby="message-dev-note">
+        {% if result %}
+          <section class="result-panel" id="analysis-result" aria-labelledby="result-heading">
+            <div class="result-panel__header">
+              <div>
+                <span class="eyebrow">Advisory Analysis Result ({{ result.channel | upper }})</span>
+                <h2 id="result-heading" class="result-panel__title">
+                  Score: {{ result.score }} / 100 —
+                  <span class="badge badge--{{ result.category.badge_kind }}">{{ result.category.label }}</span>
+                </h2>
+              </div>
+              <div class="score-meter" aria-hidden="true">
+                <div class="score-meter__fill score-meter__fill--{{ result.category.badge_kind }}" data-score="{{ result.score }}"></div>
+              </div>
+            </div>
+
+            <p class="result-panel__summary">{{ result.category.summary }}</p>
+
+            <div class="banner banner--info" role="note">
+              <strong class="banner__title">Advisory &amp; Privacy Notice</strong>
+              <p class="banner__text">
+                {{ result.advisory_note }} Your submitted message ({{ result.char_count }} characters) was processed transiently in memory and discarded.
+              </p>
+            </div>
+
+            <div class="result-block">
+              <h3 class="result-block__title">Matched Indicators &amp; Score Breakdown</h3>
+              {% if result.matched_indicators or result.matched_combinations or result.benign_contexts %}
+                <ul class="indicator-list">
+                  {% for item in result.matched_indicators %}
+                    <li class="indicator-item">
+                      <div class="indicator-item__head">
+                        <div>
+                          <span class="card__tag">{{ item.category_tag }}</span>
+                          <strong class="indicator-item__title">{{ item.title }}</strong>
+                        </div>
+                        <span class="badge badge--caution">+{{ item.contribution }} pts</span>
+                      </div>
+                      <p class="indicator-item__text">{{ item.why_it_matters }}</p>
+                    </li>
+                  {% endfor %}
+
+                  {% for combo in result.matched_combinations %}
+                    <li class="indicator-item indicator-item--combo">
+                      <div class="indicator-item__head">
+                        <div>
+                          <span class="card__tag">Context Combination</span>
+                          <strong class="indicator-item__title">{{ combo.title }}</strong>
+                        </div>
+                        <span class="badge badge--urgent">+{{ combo.contribution }} pts</span>
+                      </div>
+                      <p class="indicator-item__text">{{ combo.why_it_matters }}</p>
+                    </li>
+                  {% endfor %}
+
+                  {% for benign in result.benign_contexts %}
+                    <li class="indicator-item indicator-item--benign">
+                      <div class="indicator-item__head">
+                        <div>
+                          <span class="card__tag">Benign Context</span>
+                          <strong class="indicator-item__title">{{ benign.title }}</strong>
+                        </div>
+                        <span class="badge badge--calm">{{ benign.contribution }} pts</span>
+                      </div>
+                      <p class="indicator-item__text">{{ benign.explanation }}</p>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <p class="card__text">
+                  No specific phishing, urgency, or coercion rules matched this text. Because new or code-mixed scam scripts may not match known rules, never treat an unmatched message as proof of safety.
+                </p>
+              {% endif %}
+            </div>
+
+            <div class="result-block">
+              <h3 class="result-block__title">Recommended Next Steps</h3>
+              <ul class="plain-list">
+                {% for action in result.recommended_actions %}
+                  <li>{{ action }}</li>
+                {% endfor %}
+              </ul>
+
+              <div class="result-block__links">
+                {% if result.has_digital_arrest_signs %}
+                  <a class="btn btn--secondary" href="{{ url_for('main.digital_arrest') }}">Open Digital-Arrest Guidance</a>
+                {% endif %}
+                {% if result.score >= 31 %}
+                  <a class="btn btn--primary" href="{{ url_for('main.after_scam') }}">Already Shared Info or Paid? View Recovery Steps</a>
+                {% endif %}
+              </div>
+            </div>
+          </section>
+        {% endif %}
+
+        <form class="panel-form" method="post" action="{{ url_for('analyzer.message_analyser') }}" id="message-analyser-form" novalidate>
           <div class="form-group">
             <label class="form-label" for="message-channel">Message Channel</label>
-            <select class="form-control" id="message-channel" name="channel" disabled aria-disabled="true">
-              <option value="sms">SMS</option>
-              <option value="whatsapp">WhatsApp</option>
-              <option value="email">Email</option>
+            <select class="form-control" id="message-channel" name="channel">
+              <option value="sms" {% if selected_channel == 'sms' %}selected{% endif %}>SMS</option>
+              <option value="whatsapp" {% if selected_channel == 'whatsapp' %}selected{% endif %}>WhatsApp</option>
+              <option value="email" {% if selected_channel == 'email' %}selected{% endif %}>Email</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="message-text">
-              Message Text (maximum {{ max_message_length }} characters in Phase 2)
-            </label>
+            <div class="form-label-row">
+              <label class="form-label" for="message-text">
+                Paste Message Text (maximum {{ max_message_length }} characters)
+              </label>
+              <span class="char-counter" id="message-char-count" aria-live="polite">0 / {{ max_message_length }}</span>
+            </div>
             <textarea
               class="form-control form-control--textarea"
               id="message-text"
               name="message"
               rows="6"
               maxlength="{{ max_message_length }}"
-              placeholder="Message analysis will be enabled in Phase 2. Do not enter real passwords, full bank account numbers, or active OTPs."
-              disabled
-              aria-disabled="true"
+              required
+              placeholder="Paste an SMS, WhatsApp message, or email here. Please redact real names, phone numbers, active OTPs, or bank account details."
             ></textarea>
-            <p class="form-hint" id="message-dev-note">
-              Controls are disabled during Phase 1 so no non-functional submission or fake output is shown.
+            <p class="form-hint">
+              Submitted text is analysed strictly in memory and discarded immediately after generating your result.
             </p>
           </div>
 
-          <div class="form-actions">
-            <button type="button" class="btn btn--primary" disabled aria-disabled="true">
-              Analyse Message (Available in Phase 2)
+          <div class="form-actions form-actions--wrap">
+            <button type="submit" class="btn btn--primary">Analyse Message</button>
+            <button type="button" class="btn btn--quiet" id="clear-message-btn">Clear</button>
+          </div>
+
+          <div class="sample-bar" aria-label="Fictional demonstration examples">
+            <span class="sample-bar__label">Try a fictional example:</span>
+            <button type="button" class="btn btn--quiet btn--sm sample-btn" data-sample="digital_arrest" data-channel="whatsapp">
+              Digital-Arrest Scam
+            </button>
+            <button type="button" class="btn btn--quiet btn--sm sample-btn" data-sample="phishing_kyc" data-channel="sms">
+              Phishing KYC SMS
+            </button>
+            <button type="button" class="btn btn--quiet btn--sm sample-btn" data-sample="benign_bank" data-channel="sms">
+              Genuine Bank Alert
+            </button>
+            <button type="button" class="btn btn--quiet btn--sm sample-btn" data-sample="benign_delivery" data-channel="sms">
+              Genuine Delivery
             </button>
           </div>
         </form>
@@ -69,9 +183,9 @@
         ) }}
 
         <div class="card">
-          <h2 class="card__title">Planned Scoring Bands (0–100)</h2>
+          <h2 class="card__title">Scoring Bands (0–100)</h2>
           <p class="card__text">
-            Scores represent weighted rule matches—not calibrated probabilities—and remain advisory.
+            Scores represent weighted contextual rule matches—not calibrated probabilities—and remain advisory.
           </p>
           <ul class="band-list">
             <li><span class="badge badge--calm">0–30</span> No known red flags (still verify independently)</li>
@@ -84,4 +198,5 @@
   </section>
 
   {{ emergency_strip() }}
+  <script src="{{ url_for('static', filename='js/message_analyser.js') }}" defer></script>
 {% endblock %}
